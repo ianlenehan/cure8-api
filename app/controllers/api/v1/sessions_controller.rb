@@ -3,20 +3,20 @@ module Api::V1
 
     # POST /v1/login
     def create
-      user = User.find_by :email => params[:user][:phone]
-      if user.present? && user.authenticate(user, params[:user][:code])
+      user = User.find_by :phone => params[:user][:phone]
+      token = user.authenticate(params[:user][:code])
+      if user.present? && token
         session[:user_id] = user.id
-        user.generate_access_token
-        render json: => { user: user, status: 200 }
+        render json: { token: token, status: 200 }
       else
-        render json: => { text: 'Unable to verify user', status: 200 }
+        render json: { text: 'Unable to verify user', status: 422 }
       end
     end
 
     def destroy
       session[:user_id] = nil
       user.destroy_access_token
-      render json: => { text: "User logged out", status: 200 }
+      render json: { text: "User logged out", status: 200 }
     end
 
     def verify_access_token
