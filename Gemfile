@@ -18,6 +18,7 @@ gem 'active_model_serializers'
 
 gem 'twilio-ruby', '~> 5.0.0.rc5'
 gem 'jwt'
+gem 'metainspector'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development

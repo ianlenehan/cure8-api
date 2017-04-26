@@ -7,7 +7,7 @@ module Api::V1
       token = user.authenticate(params[:user][:code])
       if user.present? && token
         session[:user_id] = user.id
-        render json: { token: token, status: 200 }
+        render json: { token: token, user: safe_user(user), status: 200 }
       else
         render json: { text: 'Unable to verify user', status: 422 }
       end
@@ -26,6 +26,11 @@ module Api::V1
       else
         render text: "Token failed verification", status: 422
       end
+    end
+
+    private
+    def safe_user(user)
+      { id: user.id, name: user.name, phone: user.phone, shares: user.shares }
     end
 
   end

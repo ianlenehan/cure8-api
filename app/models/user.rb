@@ -1,6 +1,7 @@
 class User < ApplicationRecord
   validates :phone, presence: true
   has_and_belongs_to_many :groups
+  has_many :curations
   has_many :links, through: :curations
 
   def name
