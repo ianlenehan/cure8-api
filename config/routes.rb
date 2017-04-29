@@ -8,6 +8,7 @@ Rails.application.routes.draw do
       # get 'verify' => 'sessions#verify_access_token'
 
       post 'links/create' => 'links#create_link'
+      post 'links/fetch' => 'links#get_links'
     end
   end
 
