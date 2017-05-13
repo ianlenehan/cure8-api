@@ -28,6 +28,14 @@ module Api::V1
       end
     end
 
+    def archive
+      curation = curation.find(params[:curation][:id])
+      user = User.find(curation.user_id)
+      if curation.update(status: 'archived')
+        render json: { links: user.links, status: 200 }
+      end
+    end
+
     private
     def create_curations(numbers, link_id)
       numbers.each do |number|
