@@ -1,6 +1,5 @@
 class User < ApplicationRecord
   validates :phone, presence: true
-  has_and_belongs_to_many :groups
   has_many :curations
   has_many :links, through: :curations
 
@@ -47,6 +46,18 @@ class User < ApplicationRecord
       links.push(link_for_app)
     end
     links
+  end
+
+  def groups
+    Group.where(group_owner: self.id)
+  end
+
+  def contacts
+    self.groups.map { |group| group if group.members.length == 1 }
+  end
+
+  def contact_groups
+    self.groups.map { |group| group if group.members.length > 1 }
   end
 
   private

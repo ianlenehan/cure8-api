@@ -9,6 +9,8 @@ Rails.application.routes.draw do
 
       post 'links/create' => 'links#create_link'
       post 'links/fetch' => 'links#get_links'
+      post 'links/archive' => 'links#archive'
+      post 'contacts/create' => 'groups#create_contact'
     end
   end
 
