@@ -8,7 +8,6 @@ module Api::V1
       name = params[:contact][:name]
 
       group = user.groups.create
-      binding.pry
       group.update(
         group_owner: user.id,
         name: name,

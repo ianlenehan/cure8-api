@@ -5,6 +5,7 @@ Rails.application.routes.draw do
       # resources :users
       post 'login' => 'sessions#create'
       post 'users/request' => 'users#request_one_time_password'
+      post 'user/contacts' => 'users#get_contacts'
       # get 'verify' => 'sessions#verify_access_token'
 
       post 'links/create' => 'links#create_link'

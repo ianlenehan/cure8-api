@@ -48,12 +48,42 @@ class User < ApplicationRecord
     links
   end
 
+  # def links
+  #   self.curations.map do |curation|
+  #     link = Link.find(curation.link_id)
+  #     owner = User.find(link.link_owner)
+  #     return {
+  #       curation_id: curation.id,
+  #       link_id: link.id,
+  #       status: curation.status,
+  #       rating: curation.rating,
+  #       date_added: curation.created_at,
+  #       url: link.url,
+  #       url_type: link.url_type,
+  #       title: link.title,
+  #       image: link.image,
+  #       comment: link.comment,
+  #       owner: {
+  #         name: owner.name,
+  #         phone: owner.phone,
+  #       }
+  #     }
+  #   end
+  #
+  # end
+
+
   def groups
     Group.where(group_owner: self.id)
   end
 
   def contacts
-    self.groups.map { |group| group if group.members.length == 1 }
+    self.groups.map do |group|
+      if group.members.length == 1
+        contact = User.find(group.members.first)
+        { name: group.name, phone: contact.phone }
+      end
+    end
   end
 
   def contact_groups

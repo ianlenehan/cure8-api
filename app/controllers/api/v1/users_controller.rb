@@ -27,6 +27,12 @@ module Api::V1
       user.code_valid && user.code == code
     end
 
+    def get_contacts
+      user = User.find(params[:user][:id])
+      
+      render json: { contacts: user.contacts, groups: user.contact_groups, status: 200 }
+    end
+
     private
 
     def user
