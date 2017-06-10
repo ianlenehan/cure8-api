@@ -12,6 +12,7 @@ Rails.application.routes.draw do
       post 'links/fetch' => 'links#get_links'
       post 'links/archive' => 'links#archive'
       post 'contacts/create' => 'groups#create_contact'
+      post 'groups/create' => 'groups#create_group'
     end
   end
 

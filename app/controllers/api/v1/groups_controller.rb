@@ -2,19 +2,51 @@ module Api::V1
   class GroupsController < ApplicationController
 
     def create_contact
-      user = User.find(params[:user][:id])
       phone = params[:contact][:phone]
-      contact = User.find_or_create_by(phone: phone)
+      contact = find_or_create_contact(phone)
       name = params[:contact][:name]
-
-      group = user.groups.create
-      group.update(
+      if contact_already_exists(phone)
+        p "contact already exists"
+        render json: { status: 403 }
+      else
+        group = user.groups.create
+        group.update(
         group_owner: user.id,
         name: name,
         members: [contact.id]
-      )
+        )
+
+        render json: { contacts: user.contacts, groups: user.contact_groups, status: 200 }
+      end
+    end
+
+    def create_group
+      name = params[:group][:name]
+      numbers = params[:group][:numbers]
+      contacts = numbers.map do |number|
+        contact = find_or_create_contact(number)
+      end
+
+      group = user.groups.create
+      group.update(group_owner: user.id, name: name, members: [])
+      contacts.each { |contact| group.members << contact.id }
+      group.save
 
       render json: { contacts: user.contacts, groups: user.contact_groups, status: 200 }
+    end
+
+    private
+
+    def user
+      @user ||= User.find(params[:user][:id])
+    end
+
+    def find_or_create_contact(phone)
+      User.find_or_create_by(phone: phone)
+    end
+
+    def contact_already_exists(phone)
+      user.contacts.any? { |contact| contact[:phone] == phone }
     end
   end
 end

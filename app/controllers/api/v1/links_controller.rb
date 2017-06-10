@@ -3,19 +3,14 @@ module Api::V1
 
     # POST /v1/links/create
     def create_link
-      url = params[:link][:url]
       user_phone = params[:user][:phone]
-
       owner = User.find_by(phone: user_phone)
-      link = Link.create(
-        url: params[:link][:url],
-        url_type: params[:link][:url_type],
-        comment: params[:link][:comment],
-        link_owner: owner.id
-      )
+      link = find_or_create_link(owner, params[:link])
+      save_to_my_links = params[:link][:save_to_my_links]
 
-      get_link_data(link)
-      create_curations(params[:link][:numbers], link.id)
+      create_curations([params[:link][:contact]], link[0].id)
+      create_curations([user_phone], link.id) if save_to_my_links
+
       render json: { links: owner.links, status: 200 }
     end
 
@@ -37,10 +32,26 @@ module Api::V1
     end
 
     private
-    def create_curations(numbers, link_id)
-      numbers.each do |number|
-        user = User.find_or_create_by(phone: number)
-        Curation.create(user_id: user.id, link_id: link_id)
+    def create_curations(group_ids, link_id)
+      group_ids.each do |group_id|
+        Group.find(group_id).members.each do |member|
+          contact = User.find(member)
+          Curation.create(user_id: contact.id, link_id: link_id)
+        end
+      end
+    end
+
+    def find_or_create_link(owner, link_params)
+      if link = Link.where(link_owner: owner.id, url: link_params[:url])
+        link
+      else
+        link = Link.create(
+          url: params[:link][:url],
+          comment: params[:link][:comment],
+          link_owner: owner.id
+        )
+        get_link_data(link)
+        link
       end
     end
 
