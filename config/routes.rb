@@ -6,6 +6,7 @@ Rails.application.routes.draw do
       post 'login' => 'sessions#create'
       post 'users/request' => 'users#request_one_time_password'
       post 'user/contacts' => 'users#get_contacts'
+      post 'user/contacts/delete' => 'users#delete_contact'
       # get 'verify' => 'sessions#verify_access_token'
 
       post 'links/create' => 'links#create_link'

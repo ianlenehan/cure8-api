@@ -36,6 +36,13 @@ module Api::V1
       render json: { contacts: user.contacts.compact, groups: user.contact_groups, status: 200 }
     end
 
+    def delete_contact
+      user = User.find(params[:user][:id])
+      contact_group = Group.find(params[:contact][:id])
+      contact_group.destroy
+      render json: { contacts: user.contacts.compact, groups: user.contact_groups, status: 200 }
+    end
+
     private
 
     def user

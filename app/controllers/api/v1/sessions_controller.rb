@@ -4,10 +4,14 @@ module Api::V1
     # POST /v1/login
     def create
       user = User.find_by :phone => params[:user][:phone]
-      token = user.authenticate(params[:user][:code])
-      if user.present? && token
-        session[:user_id] = user.id
-        render json: { token: token, user: safe_user(user), status: 200 }
+      if user.present?
+        token = user.authenticate(params[:user][:code])
+        if token
+          session[:user_id] = user.id
+          render json: { token: token, user: safe_user(user), status: 200 }
+        else
+          render json: { text: 'Unable to verify user', status: 422 }
+        end
       else
         render json: { text: 'Unable to verify user', status: 422 }
       end
