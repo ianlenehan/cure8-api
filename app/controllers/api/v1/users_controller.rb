@@ -10,7 +10,7 @@ module Api::V1
     end
 
     def request_one_time_password
-      phone = params[:phone].gsub(/[^\d]/, '')
+      phone = params[:phone]
       user = User.find_or_create_by(phone: phone)
       user.update(code: '1234', code_valid: true)
       buttonText = does_user_have_account(user)
@@ -29,10 +29,7 @@ module Api::V1
     end
 
     def get_contacts
-      puts 'get contacts'
       user = User.find(params[:user][:id])
-      puts 'user'
-      puts user
       render json: { contacts: user.contacts.compact, groups: user.contact_groups, status: 200 }
     end
 

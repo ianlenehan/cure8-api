@@ -3,7 +3,7 @@ module Api::V1
 
     # POST /v1/login
     def create
-      user = User.find_by :phone => params[:user][:phone]
+      user = find_and_update_user
       if user.present?
         token = user.authenticate(params[:user][:code])
         if token
@@ -35,6 +35,16 @@ module Api::V1
     private
     def safe_user(user)
       { id: user.id, name: user.name, phone: user.phone, shares: user.shares }
+    end
+
+    def find_and_update_user
+      user = User.find_by :phone => params[:user][:phone]
+      if !user.first_name
+        first_name = params[:user][:first_name]
+        last_name = params[:user][:last_name]
+        user.update(first_name: first_name, last_name: last_name)
+      end
+      user
     end
 
   end
