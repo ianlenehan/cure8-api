@@ -65,14 +65,25 @@ class User < ApplicationRecord
   end
 
   def contact_groups
-    contact_groups = self.groups.map { |group| group if group.members.length > 1 }
-    contact_groups.compact.sort_by { |contact_group| contact_group.name }
+    contact_groups = self.groups.select { |group| group.members.length > 1 }
+    sorted_groups = contact_groups.sort_by { |group| group.name }
+    sorted_groups.map do |group|
+      members = get_members(group)
+      { id: group.id, name: group.name, members: members }
+    end
   end
 
   private
 
   def hmac_secret
     Rails.application.secrets.hmac_secret
+  end
+
+  def get_members(group)
+    group.members.map do |member_id|
+      member = Group.find(member_id)
+      { name: member.name, id: member_id }
+    end
   end
 
 end

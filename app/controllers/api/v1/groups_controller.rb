@@ -22,9 +22,9 @@ module Api::V1
 
     def create_group
       name = params[:group][:name]
-      numbers = params[:group][:numbers]
-      contacts = numbers.map do |number|
-        contact = find_or_create_contact(number)
+      members = params[:group][:members]
+      contacts = members.map do |member|
+        contact = Group.find_by(id: member, group_owner: user.id)
       end
 
       group = user.groups.create
