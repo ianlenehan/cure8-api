@@ -3,15 +3,16 @@ module Api::V1
 
     # POST /v1/links/create
     def create_link
-      user_phone = params[:user][:phone]
-      owner = User.find_by(phone: user_phone)
-      link = find_or_create_link(owner, params[:link])
+      user = User.find(params[:user][:id])
+      link = find_or_create_link(user, params[:link])
       save_to_my_links = params[:link][:save_to_my_links]
 
-      create_curations([params[:link][:contact]], link[0].id)
-      create_curations([user_phone], link.id) if save_to_my_links
+      create_curations([params[:link][:contact]], link.id)
+      if save_to_my_links
+        Curation.create(user_id: user.id, link_id: link.id)
+      end
 
-      render json: { links: owner.links, status: 200 }
+      render json: { links: user.links, status: 200 }
     end
 
     def get_links
@@ -35,24 +36,22 @@ module Api::V1
     def create_curations(group_ids, link_id)
       group_ids.each do |group_id|
         Group.find(group_id).members.each do |member|
-          contact = User.find(member)
-          Curation.create(user_id: contact.id, link_id: link_id)
+          contact = Group.find(member)
+          Curation.create(user_id: contact.members.first, link_id: link_id)
         end
       end
     end
 
     def find_or_create_link(owner, link_params)
-      if link = Link.where(link_owner: owner.id, url: link_params[:url])
-        link
-      else
-        link = Link.create(
-          url: params[:link][:url],
-          comment: params[:link][:comment],
-          link_owner: owner.id
-        )
-        get_link_data(link)
-        link
-      end
+      link = Link.find_by(link_owner: owner.id, url: link_params[:url])
+      return link if link
+
+      newLink = Link.create(
+        url: params[:link][:url],
+        comment: params[:link][:comment],
+        link_owner: owner.id
+      )
+      get_link_data(newLink)
     end
 
     def get_link_data(link)
@@ -60,6 +59,7 @@ module Api::V1
       title = page.title
       image = page.images.best
       link.update(title: title, image: image)
+      link
     end
   end
 end
