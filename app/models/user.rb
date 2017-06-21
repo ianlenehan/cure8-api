@@ -54,8 +54,8 @@ class User < ApplicationRecord
 
   def contacts
     contacts = self.groups.map do |group|
-      if group.members.length == 1
-        contact = User.find(group.members.first)
+      if group.user_id
+        contact = User.find(group.user_id)
         { name: group.name, phone: contact.phone, id: group.id }
       end
     end
@@ -65,7 +65,7 @@ class User < ApplicationRecord
   end
 
   def contact_groups
-    contact_groups = self.groups.select { |group| group.members.length > 1 }
+    contact_groups = self.groups.select { |group| group.members }
     sorted_groups = contact_groups.sort_by { |group| group.name }
     sorted_groups.map do |group|
       members = get_members(group)
@@ -82,7 +82,7 @@ class User < ApplicationRecord
   def get_members(group)
     group.members.map do |member_id|
       member = Group.find(member_id)
-      { name: member.name, id: member_id }
+      { name: member.name, id: member.user_id }
     end
   end
 
