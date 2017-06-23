@@ -34,13 +34,16 @@ module Api::V1
 
     private
     def create_curations(group_id, link_id)
-      group = Group.find(group_id)
-      if group.user_id
-        Curation.create(user_id: group.user_id, link_id: link_id)
-      else
-        group.members.each do |member_id|
-          user_group = Group.find(member_id)
-          Curation.create(user_id: user_group.user_id, link_id: link_id)
+      # guard against id of zero
+      if group_id > 0
+        group = Group.find(group_id)
+        if group.user_id
+          Curation.create(user_id: group.user_id, link_id: link_id)
+        else
+          group.members.each do |member_id|
+            user_group = Group.find(member_id)
+            Curation.create(user_id: user_group.user_id, link_id: link_id)
+          end
         end
       end
     end
