@@ -23,8 +23,11 @@ class User < ApplicationRecord
   end
 
   def links
-    links = []
-    self.curations.each do |curation|
+    curations = self.curations.select do |curation|
+      curation.rating != '0'
+    end
+
+    links = curations.map do |curation|
       link = Link.find(curation.link_id)
       owner = User.find(link.link_owner)
       link_for_app = {
@@ -43,9 +46,9 @@ class User < ApplicationRecord
           phone: owner.phone,
         }
       }
-      links.push(link_for_app)
+      link_for_app
     end
-    links
+    links.sort_by { |link| link[:date_added] }
   end
 
   def groups
@@ -59,9 +62,7 @@ class User < ApplicationRecord
         { name: group.name, phone: contact.phone, id: group.id }
       end
     end
-    contacts.compact.sort_by do |contact|
-      contact[:name]
-    end
+    contacts.compact.sort_by { |contact| contact[:name] }
   end
 
   def contact_groups
