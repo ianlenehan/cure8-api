@@ -49,7 +49,8 @@ module Api::V1
     end
 
     def find_or_create_link(owner, link_params)
-      link = Link.find_by(link_owner: owner.id, url: link_params[:url])
+      url = format_url(link_params[:url])
+      link = Link.find_by(link_owner: owner.id, url: url)
       return link if link
 
       newLink = Link.create(
@@ -58,6 +59,14 @@ module Api::V1
         link_owner: owner.id
       )
       get_link_data(newLink)
+    end
+
+    def format_url(url)
+      if url.slice(0, 4) == 'http'
+        url
+      else
+        "#{http://}url"
+      end
     end
 
     def get_link_data(link)
