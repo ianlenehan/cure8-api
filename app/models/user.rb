@@ -74,6 +74,21 @@ class User < ApplicationRecord
     end
   end
 
+  def stats
+    links = Link.where(link_owner: self.id)
+    curations = links.map { |link| link.curations.count }
+    ratings = links.map do |link|
+      link.curations.map do |curation|
+        curation.rating.to_f if curation.rating
+      end
+    end
+    curation_count = curations.reduce(:+)
+    rating_count = ratings.flatten.compact.reduce(:+)
+    archived_count = ratings.flatten.compact.count
+    score = (rating_count / archived_count).round(2)
+    { curations: curation_count, score: score, archived: archived_count, ratings: rating_count }
+  end
+
   private
 
   def hmac_secret

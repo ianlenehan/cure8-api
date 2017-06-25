@@ -29,21 +29,27 @@ module Api::V1
     end
 
     def get_contacts
-      user = User.find(params[:user][:id])
-      render json: { contacts: user.contacts.compact, groups: user.contact_groups, status: 200 }
+      render json: { contacts: user_by_id.contacts.compact, groups: user_by_id.contact_groups, status: 200 }
     end
 
     def delete_contact
-      user = User.find(params[:user][:id])
       contact_group = Group.find(params[:contact][:id])
       contact_group.destroy
-      render json: { contacts: user.contacts.compact, groups: user.contact_groups, status: 200 }
+      render json: { contacts: user_by_id.contacts.compact, groups: user_by_id.contact_groups, status: 200 }
+    end
+
+    def get_user_info
+      render json: { stats: user_by_id.stats, name: user_by_id.name, status: 200 }
     end
 
     private
 
     def user
       @user || (find_user_by_phone || create_user_by_phone)
+    end
+
+    def user_by_id
+      @user_by_id || User.find(params[:user][:id])
     end
 
     def find_user_by_phone
