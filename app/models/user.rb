@@ -82,9 +82,9 @@ class User < ApplicationRecord
         curation.rating.to_f if curation.rating
       end
     end
-    curation_count = curations.reduce(:+)
-    rating_count = ratings.flatten.compact.reduce(:+)
-    archived_count = ratings.flatten.compact.count
+    curation_count = curations.reduce(:+) || 0
+    rating_count = ratings.flatten.compact.reduce(:+) || 0
+    archived_count = ratings.flatten.compact.count || 0
     score = (rating_count / archived_count).round(2)
     { curations: curation_count, score: score, archived: archived_count, ratings: rating_count }
   end
