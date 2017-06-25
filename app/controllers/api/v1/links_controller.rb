@@ -65,7 +65,7 @@ module Api::V1
       if url.slice(0, 4) == 'http'
         url
       else
-        "#{http://}url"
+        "http://#{url}"
       end
     end
 
