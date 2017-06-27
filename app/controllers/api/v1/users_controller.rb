@@ -11,15 +11,16 @@ module Api::V1
 
     def request_one_time_password
       phone = params[:phone]
-      user = User.find_or_create_by(phone: phone)
-      user.update(code: '1234', code_valid: true)
-      buttonText = does_user_have_account(user)
-      # @client = Twilio::REST::Client.new twilio[:account_sid], twilio[:auth_token]
-      # message = @client.account.messages.create(
-      #   :body => "Your cure8 one time password is #{one_time_password}.",
-      #   :to => phone,
-      #   :from => "+61439765683"
-      #   )
+      # user = User.find_or_create_by(phone: phone)
+      # user.update(code: '1234', code_valid: true)
+      buttonText = does_user_have_account
+      @client = Twilio::REST::Client.new twilio[:account_sid], twilio[:auth_token]
+      message = @client.account.messages.create(
+        :body => "Your cure8 one time password is #{one_time_password}.",
+        :to => phone,
+        # :from => "+15005550006"
+        :from => "+61429806720"
+        )
       render json: { buttonText: buttonText, status: 200 }
     end
 
@@ -53,7 +54,7 @@ module Api::V1
     end
 
     def find_user_by_phone
-      User.where(phone: params[:user][:phone])
+      User.find_by(phone: params[:user][:phone])
     end
 
     def create_user_by_phone
@@ -66,7 +67,7 @@ module Api::V1
       code
     end
 
-    def does_user_have_account(user)
+    def does_user_have_account
       return 'Login' if user.first_name
       return 'Create Account'
     end

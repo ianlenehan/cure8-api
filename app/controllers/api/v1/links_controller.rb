@@ -16,8 +16,13 @@ module Api::V1
     end
 
     def get_links
+      puts 'params'
+      puts params
       user = User.find(params[:user_id])
+      puts 'any?'
+      puts user.links.any?
       if user.links.any?
+        puts 'rendering'
         render json: { links: user.links, status: 200 }
       else
         render json: { status: 204 }
