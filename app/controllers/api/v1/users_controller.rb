@@ -35,6 +35,7 @@ module Api::V1
 
     def delete_contact
       contact_group = Group.find(params[:contact][:id])
+      remove_user_from_groups(params[:contact][:id])
       contact_group.destroy
       render json: { contacts: user_by_id.contacts.compact, groups: user_by_id.contact_groups, status: 200 }
     end
@@ -70,6 +71,15 @@ module Api::V1
     def does_user_have_account
       return 'Login' if user.first_name
       return 'Create Account'
+    end
+
+    def remove_user_from_groups(contact_id)
+      user_by_id.groups.each do |group|
+        if group.members and group.members.include? contact_id
+          group.members.delete contact_id
+          group.save
+        end
+      end
     end
 
     def twilio
