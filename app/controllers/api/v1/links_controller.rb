@@ -44,12 +44,29 @@ module Api::V1
         group = Group.find(group_id)
         if group.user_id
           Curation.create(user_id: group.user_id, link_id: link_id)
+          send_sms(group.user_id, link_id)
         else
           group.members.each do |member_id|
             user_group = Group.find(member_id)
             Curation.create(user_id: user_group.user_id, link_id: link_id)
+            send_sms(user_group.user_id, link_id)
           end
         end
+      end
+    end
+
+    def send_sms(user_id, link_id)
+      curator_id = Link.find(link_id).link_owner
+      curator = User.find(curator_id)
+      user = User.find(user_id)
+      if !u.first_name
+        @client = Twilio::REST::Client.new twilio[:account_sid], twilio[:auth_token]
+        message = @client.account.messages.create(
+        :body => "Your friend #{curator.name} has saved a link for you on cure8. As it's just testing you'll need the 'expo' app and Ian can give you the link.",
+        :to => user.phone,
+        # :from => "+15005550006"
+        :from => "+61429806720"
+        )
       end
     end
 
@@ -80,6 +97,13 @@ module Api::V1
       image = page.images.best
       link.update(title: title, image: image)
       link
+    end
+
+    def twilio
+      {
+        account_sid: Rails.application.secrets.twilio_account_sid,
+        auth_token: Rails.application.secrets.twilio_auth_token
+      }
     end
   end
 end
