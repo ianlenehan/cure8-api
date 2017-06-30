@@ -59,7 +59,7 @@ module Api::V1
       curator_id = Link.find(link_id).link_owner
       curator = User.find(curator_id)
       user = User.find(user_id)
-      if !u.first_name
+      if !user.first_name
         @client = Twilio::REST::Client.new twilio[:account_sid], twilio[:auth_token]
         message = @client.account.messages.create(
         :body => "Your friend #{curator.name} has saved a link for you on cure8. As it's just testing you'll need the 'expo' app and Ian can give you the link.",
