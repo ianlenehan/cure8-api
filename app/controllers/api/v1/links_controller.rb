@@ -7,7 +7,7 @@ module Api::V1
       link = find_or_create_link(user, params[:link])
       save_to_my_links = params[:link][:save_to_my_links]
 
-      create_curations(params[:link][:contact_id], link.id)
+      create_curations(params[:link][:contacts], link.id)
       if save_to_my_links
         Curation.create(user_id: user.id, link_id: link.id)
       end
@@ -38,18 +38,20 @@ module Api::V1
     end
 
     private
-    def create_curations(group_id, link_id)
+    def create_curations(group_ids, link_id)
       # guard against id of zero
-      if group_id > 0
-        group = Group.find(group_id)
-        if group.user_id
-          Curation.create(user_id: group.user_id, link_id: link_id)
-          send_sms(group.user_id, link_id)
-        else
-          group.members.each do |member_id|
-            user_group = Group.find(member_id)
-            Curation.create(user_id: user_group.user_id, link_id: link_id)
-            send_sms(user_group.user_id, link_id)
+      if group_ids
+        group_ids.each do |group_id|
+          group = Group.find(group_id)
+          if group.user_id
+            Curation.create(user_id: group.user_id, link_id: link_id)
+            # send_sms(group.user_id, link_id)
+          else
+            group.members.each do |member_id|
+              user_group = Group.find(member_id)
+              Curation.create(user_id: user_group.user_id, link_id: link_id)
+              # send_sms(user_group.user_id, link_id)
+            end
           end
         end
       end
