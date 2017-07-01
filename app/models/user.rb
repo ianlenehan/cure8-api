@@ -40,7 +40,7 @@ class User < ApplicationRecord
         url_type: link.url_type,
         title: link.title,
         image: link.image,
-        comment: link.comment,
+        comment: curation.comment,
         owner: {
           name: owner.name,
           phone: owner.phone,
