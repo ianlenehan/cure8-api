@@ -46,12 +46,12 @@ module Api::V1
           group = Group.find(group_id)
           if group.user_id
             Curation.create(user_id: group.user_id, link_id: link_id, comment: comment)
-            # send_sms(group.user_id, link_id)
+            send_sms(group.user_id, link_id)
           else
             group.members.each do |member_id|
               user_group = Group.find(member_id)
               Curation.create(user_id: user_group.user_id, link_id: link_id, comment: comment)
-              # send_sms(user_group.user_id, link_id)
+              send_sms(user_group.user_id, link_id)
             end
           end
         end
