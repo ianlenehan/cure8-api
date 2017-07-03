@@ -77,7 +77,6 @@ module Api::V1
       curator = User.find(link.link_owner)
       message = "#{curator.name} has sent you a new link about #{link.title}"
       send_notification(user, message)
-      exponent.publish(
     end
 
     def rating_notification(user, curation, rating)
@@ -89,10 +88,11 @@ module Api::V1
     end
 
     def send_notification(user, message)
-      exponentPushToken: user.push_token,
-      message: message,
-      data: { text: message }, # Data is required, pass any arbitrary data to include with the notification
-    )
+      exponent.publish(
+        exponentPushToken: user.push_token,
+        message: message,
+        data: { text: message }, # Data is required, pass any arbitrary data to include with the notification
+      )
     end
 
     def find_or_create_link(owner, link_params)
