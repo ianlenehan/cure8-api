@@ -42,7 +42,7 @@ module Api::V1
       if !user.first_name
         first_name = params[:user][:first_name]
         last_name = params[:user][:last_name]
-        user.update(first_name: first_name, last_name: last_name)
+        user.update(first_name: first_name.strip, last_name: last_name.strip)
       end
       user
     end

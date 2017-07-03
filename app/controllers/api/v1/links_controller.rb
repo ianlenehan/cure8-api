@@ -11,16 +11,18 @@ module Api::V1
 
       create_curations(contacts, comment, link.id)
       if save_to_my_links
+        puts 'saving to my links'
+        send_notification(user, link)
         Curation.create(user_id: user.id, link_id: link.id, comment: comment)
       end
 
-      render json: { links: user.links, status: 200 }
+      render json: { links: user.links.reverse, status: 200 }
     end
 
     def get_links
       user = User.find(params[:user_id])
       if user.links.any?
-        render json: { links: user.links, status: 200 }
+        render json: { links: user.links.reverse, status: 200 }
       else
         render json: { status: 204 }
       end
@@ -29,8 +31,10 @@ module Api::V1
     def archive
       curation = Curation.find(params[:curation][:id])
       user = User.find(curation.user_id)
-      if curation.update(status: 'archived', rating: params[:curation][:rating])
-        render json: { links: user.links, status: 200 }
+      rating = params[:curation][:rating]
+      if curation.update(status: 'archived', rating: rating)
+        rating_notification(user, curation, rating)
+        render json: { links: user.links.reverse, status: 200 }
       end
     end
 
@@ -69,6 +73,28 @@ module Api::V1
       end
     end
 
+    def new_link_notification(user, link)
+      curator = User.find(link.link_owner)
+      message = "#{curator.name} has sent you a new link about #{link.title}"
+      send_notification(user, message)
+      exponent.publish(
+    end
+
+    def rating_notification(user, curation, rating)
+      reaction = rating === "1" ? "thumbs up" : "thumbs down"
+      curator = User.find(link.link_owner)
+      link = Link.find(curation.link_id)
+      message = "#{user.name} gave your curation about #{link.title} a #{reaction}"
+      send_notification(curator, message)
+    end
+
+    def send_notification(user, message)
+      exponentPushToken: user.push_token,
+      message: message,
+      data: { text: message }, # Data is required, pass any arbitrary data to include with the notification
+    )
+    end
+
     def find_or_create_link(owner, link_params)
       url = format_url(link_params[:url])
       link = Link.find_by(link_owner: owner.id, url: url)
@@ -102,6 +128,10 @@ module Api::V1
         account_sid: Rails.application.secrets.twilio_account_sid,
         auth_token: Rails.application.secrets.twilio_auth_token
       }
+    end
+
+    def exponent
+      @exponent ||= Exponent::Push::Client.new
     end
   end
 end
