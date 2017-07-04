@@ -78,21 +78,14 @@ module Api::V1
     end
 
     def rating_notification(user, curation, rating)
-      p 'rating'
-      p rating
       reaction = rating == 1 ? "thumbs up" : "thumbs down"
       link = Link.find(curation.link_id)
       curator = User.find(link.link_owner)
       message = "#{user.name} gave your curation about #{link.title} a #{reaction}"
-      p 'message'
-      p message
       send_notification(curator, message)
     end
 
     def send_notification(user, message)
-      p 'send notificaio'
-      p user
-      p message
       exponent.publish(
         exponentPushToken: user.push_token,
         message: message,
