@@ -11,8 +11,7 @@ module Api::V1
 
       create_curations(contacts, comment, link.id)
       if save_to_my_links
-        puts 'saving to my links'
-        send_notification(user, link)
+        new_link_notification(user, link)
         Curation.create(user_id: user.id, link_id: link.id, comment: comment)
       end
 
@@ -40,7 +39,6 @@ module Api::V1
 
     private
     def create_curations(group_ids, comment, link_id)
-      # guard against id of zero
       if group_ids
         group_ids.each do |group_id|
           group = Group.find(group_id)
@@ -80,9 +78,9 @@ module Api::V1
     end
 
     def rating_notification(user, curation, rating)
-      reaction = rating === "1" ? "thumbs up" : "thumbs down"
-      curator = User.find(link.link_owner)
+      reaction = rating == 1 ? "thumbs up" : "thumbs down"
       link = Link.find(curation.link_id)
+      curator = User.find(link.link_owner)
       message = "#{user.name} gave your curation about #{link.title} a #{reaction}"
       send_notification(curator, message)
     end
