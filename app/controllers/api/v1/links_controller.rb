@@ -73,7 +73,7 @@ module Api::V1
 
     def new_link_notification(user, link)
       curator = User.find(link.link_owner)
-      message = "#{curator.name} has sent you a new link about #{link.title}"
+      message = "#{curator.name} has curated a new link for you: '#{link.title}'"
       send_notification(user, message)
     end
 
