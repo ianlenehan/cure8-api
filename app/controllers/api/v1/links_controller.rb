@@ -38,16 +38,22 @@ module Api::V1
     end
 
     private
+
+    # TODO refactor this method
     def create_curations(group_ids, comment, link_id)
       if group_ids
         group_ids.each do |group_id|
           group = Group.find(group_id)
           if group.user_id
+            user = User.find(group.user_id)
+            new_link_notification(user, link)
             Curation.create(user_id: group.user_id, link_id: link_id, comment: comment)
             send_sms(group.user_id, link_id)
           else
             group.members.each do |member_id|
               user_group = Group.find(member_id)
+              user = User.find(user_group.user_id)
+              new_link_notification(user, link)
               Curation.create(user_id: user_group.user_id, link_id: link_id, comment: comment)
               send_sms(user_group.user_id, link_id)
             end
