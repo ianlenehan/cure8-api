@@ -48,14 +48,14 @@ module Api::V1
             user = User.find(group.user_id)
             new_link_notification(user, link)
             Curation.create(user_id: group.user_id, link_id: link.id, comment: comment)
-            send_sms(group.user_id, link_id)
+            send_sms(group.user_id, link.id)
           else
             group.members.each do |member_id|
               user_group = Group.find(member_id)
               user = User.find(user_group.user_id)
               new_link_notification(user, link)
               Curation.create(user_id: user_group.user_id, link_id: link.id, comment: comment)
-              send_sms(user_group.user_id, link_id)
+              send_sms(user_group.user_id, link.id)
             end
           end
         end
