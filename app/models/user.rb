@@ -24,7 +24,7 @@ class User < ApplicationRecord
 
   def links
     curations = self.curations.select do |curation|
-      curation.rating != '0'
+      curation.rating != '0' and curation.status != 'deleted'
     end
 
     links = curations.map do |curation|

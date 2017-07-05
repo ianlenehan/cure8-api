@@ -31,7 +31,9 @@ module Api::V1
       curation = Curation.find(params[:curation][:id])
       user = User.find(curation.user_id)
       rating = params[:curation][:rating]
-      if curation.update(status: 'archived', rating: rating)
+      action = params[:curation][:action]
+      
+      if curation.update(status: action, rating: rating)
         rating_notification(user, curation, rating)
         render json: { links: user.links.reverse, status: 200 }
       end
