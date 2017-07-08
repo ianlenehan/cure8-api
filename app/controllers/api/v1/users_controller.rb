@@ -1,17 +1,7 @@
 module Api::V1
   class UsersController < ApplicationController
-
-    def index
-      render json: User.all
-    end
-
-    def show
-      respond_with User.find(params[:id])
-    end
-
     def request_one_time_password
-      phone = params[:phone]
-      # user = User.find_or_create_by(phone: phone)
+      # phone = params[:user][:phone]
       # user.update(code: '1234', code_valid: true)
       buttonText = does_user_have_account
       @client = Twilio::REST::Client.new twilio[:account_sid], twilio[:auth_token]
@@ -26,46 +16,62 @@ module Api::V1
 
     def authenticate
       code = params[:user][:code]
-      user.code_valid && user.code == code
+      found_user.code_valid && found_user.code == code
     end
 
     def add_push_token
       token = params[:token][:token]
-      user_by_id.update(push_token: token)
+      user.update(push_token: token)
       render json: { status: 200 }
     end
 
+    def update
+      user.update(update_params)
+    end
+
     def get_contacts
-      render json: { contacts: user_by_id.contacts.compact, groups: user_by_id.contact_groups, status: 200 }
+      render json: { contacts: user.contacts.compact, groups: user.contact_groups, status: 200 }
     end
 
     def delete_contact
       contact_group = Group.find(params[:contact][:id])
       remove_user_from_groups(params[:contact][:id])
       contact_group.destroy
-      render json: { contacts: user_by_id.contacts.compact, groups: user_by_id.contact_groups, status: 200 }
+      render json: { contacts: user.contacts.compact, groups: user.contact_groups, status: 200 }
     end
 
     def get_user_info
-      render json: { stats: user_by_id.stats, name: user_by_id.name, status: 200 }
+      notifications = {
+        push: user.notifications,
+        curation: user.notifications_new_link,
+        rating: user.notifications_new_rating
+      }
+      render json: {
+        stats: user.stats,
+        name: user.name,
+        phone: user.phone,
+        notifications: notifications,
+        status: 200
+      }
+    end
+
+    def update
+      field = params[:user][:field]
+      symbol = "#{field}".to_sym
+      value = params[:user][:value]
+
+      user.update_attribute(symbol, value)
+      get_user_info
     end
 
     private
 
+    def found_user
+      @found_user || User.find_or_create_by(phone: params[:user][:phone])
+    end
+
     def user
-      @user || (find_user_by_phone || create_user_by_phone)
-    end
-
-    def user_by_id
-      @user_by_id || User.find(params[:user][:id])
-    end
-
-    def find_user_by_phone
-      User.find_by(phone: params[:user][:phone])
-    end
-
-    def create_user_by_phone
-      User.create(phone: params[:user][:phone])
+      @user || User.find(params[:user][:id])
     end
 
     def one_time_password

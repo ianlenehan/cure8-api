@@ -11,7 +11,6 @@ module Api::V1
 
       create_curations(contacts, comment, link)
       if save_to_my_links
-        new_link_notification(user, link)
         Curation.create(user_id: user.id, link_id: link.id, comment: comment)
       end
 
@@ -32,9 +31,9 @@ module Api::V1
       user = User.find(curation.user_id)
       rating = params[:curation][:rating]
       action = params[:curation][:action]
-      
+
       if curation.update(status: action, rating: rating)
-        rating_notification(user, curation, rating)
+        rating_notification(user, curation, rating) if notify_rating(user)
         render json: { links: user.links.reverse, status: 200 }
       end
     end
@@ -48,14 +47,14 @@ module Api::V1
           group = Group.find(group_id)
           if group.user_id
             user = User.find(group.user_id)
-            new_link_notification(user, link)
+            new_link_notification(user, link) if notify_curation(user)
             Curation.create(user_id: group.user_id, link_id: link.id, comment: comment)
             send_sms(group.user_id, link.id)
           else
             group.members.each do |member_id|
               user_group = Group.find(member_id)
               user = User.find(user_group.user_id)
-              new_link_notification(user, link)
+              new_link_notification(user, link) if notify_curation(user)
               Curation.create(user_id: user_group.user_id, link_id: link.id, comment: comment)
               send_sms(user_group.user_id, link.id)
             end
@@ -127,6 +126,14 @@ module Api::V1
       image = page.images.best
       link.update(title: title, image: image)
       link
+    end
+
+    def notify_rating(user)
+      user.notifications and user.notifications_new_rating
+    end
+
+    def notify_curation(user)
+      user.notifications and user.notifications_new_link
     end
 
     def twilio
