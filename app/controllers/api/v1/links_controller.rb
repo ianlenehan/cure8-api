@@ -69,7 +69,7 @@ module Api::V1
       if !user.first_name
         @client = Twilio::REST::Client.new twilio[:account_sid], twilio[:auth_token]
         message = @client.account.messages.create(
-        :body => "Your friend #{curator.name} has saved a link for you on cure8. As it's just testing you'll need the 'expo' app and Ian can give you the link.",
+        :body => "Your friend #{curator.name} has saved a link for you on cure8. This can be accessed by first downloading 'expo client' from the App Store or Google Play Store. Once installed, open this link: https://exp.host/@ianlenehan/cure8-app",
         :to => user.phone,
         # :from => "+15005550006"
         :from => "+61429806720"
