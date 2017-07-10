@@ -30,10 +30,10 @@ module Api::V1
       user = User.find(curation.user_id)
       rating = params[:curation][:rating]
       action = params[:curation][:action]
-      notify? = curation.rating ? false : true
+      notify = curation.rating ? false : true
 
       if curation.update(status: action, rating: rating)
-        rating_notification(user, curation, rating) if notify?
+        rating_notification(user, curation, rating) if notify
         render json: { links: user.links.reverse, status: 200 }
       end
     end
