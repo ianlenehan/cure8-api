@@ -7,10 +7,9 @@ module Api::V1
       contacts = params[:link][:contacts]
       comment = params[:link][:comment]
       link = find_or_create_link(user, params[:link])
-      save_to_my_links = params[:link][:save_to_my_links]
 
       create_curations(contacts, comment, link)
-      if save_to_my_links
+      if params[:link][:save_to_my_links]
         Curation.create(user_id: user.id, link_id: link.id, comment: comment)
       end
 
@@ -33,7 +32,7 @@ module Api::V1
       action = params[:curation][:action]
 
       if curation.update(status: action, rating: rating)
-        rating_notification(user, curation, rating) if notify_rating(user)
+        rating_notification(user, curation, rating)
         render json: { links: user.links.reverse, status: 200 }
       end
     end
@@ -47,14 +46,14 @@ module Api::V1
           group = Group.find(group_id)
           if group.user_id
             user = User.find(group.user_id)
-            new_link_notification(user, link) if notify_curation(user)
+            new_link_notification(user, link)
             Curation.create(user_id: group.user_id, link_id: link.id, comment: comment)
             send_sms(group.user_id, link.id)
           else
             group.members.each do |member_id|
               user_group = Group.find(member_id)
               user = User.find(user_group.user_id)
-              new_link_notification(user, link) if notify_curation(user)
+              new_link_notification(user, link)
               Curation.create(user_id: user_group.user_id, link_id: link.id, comment: comment)
               send_sms(user_group.user_id, link.id)
             end
@@ -79,25 +78,31 @@ module Api::V1
     end
 
     def new_link_notification(user, link)
-      curator = User.find(link.link_owner)
-      message = "#{curator.name} has curated a new link for you: '#{link.title}'"
-      send_notification(user, message)
+      if user.notifications_new_link
+        curator = User.find(link.link_owner)
+        message = "#{curator.name} has curated a new link for you: '#{link.title}'"
+        send_notification(user, message)
+      end
     end
 
     def rating_notification(user, curation, rating)
-      reaction = rating == 1 ? "thumbs up" : "thumbs down"
-      link = Link.find(curation.link_id)
-      curator = User.find(link.link_owner)
-      message = "#{user.name} gave your curation about #{link.title} a #{reaction}"
-      send_notification(curator, message)
+      if user.notifications_new_rating
+        reaction = rating == 1 ? "thumbs up" : "thumbs down"
+        link = Link.find(curation.link_id)
+        curator = User.find(link.link_owner)
+        message = "#{user.name} gave your curation about #{link.title} a #{reaction}"
+        send_notification(curator, message)
+      end
     end
 
     def send_notification(user, message)
-      exponent.publish(
+      if user.notifications
+        exponent.publish(
         exponentPushToken: user.push_token,
         message: message,
         data: { text: message }, # Data is required, pass any arbitrary data to include with the notification
-      )
+        )
+      end
     end
 
     def find_or_create_link(owner, link_params)
@@ -126,14 +131,6 @@ module Api::V1
       image = page.images.best
       link.update(title: title, image: image)
       link
-    end
-
-    def notify_rating(user)
-      user.notifications and user.notifications_new_rating
-    end
-
-    def notify_curation(user)
-      user.notifications and user.notifications_new_link
     end
 
     def twilio

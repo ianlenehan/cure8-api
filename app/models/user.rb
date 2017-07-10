@@ -41,6 +41,7 @@ class User < ApplicationRecord
         title: link.title,
         image: link.image,
         comment: curation.comment,
+        shared_with: people_shared_with(link, owner),
         owner: {
           name: owner.name,
           phone: owner.phone,
@@ -94,6 +95,12 @@ class User < ApplicationRecord
   end
 
   private
+
+  def people_shared_with(link, owner)
+    curations = Curation.where(link_id: link.id)
+    shared_with = curations.select { |curation| curation.user_id != owner.id }
+    shared_with.length
+  end
 
   def hmac_secret
     Rails.application.secrets.hmac_secret
