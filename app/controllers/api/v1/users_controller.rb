@@ -7,7 +7,7 @@ module Api::V1
       @client = Twilio::REST::Client.new twilio[:account_sid], twilio[:auth_token]
       message = @client.account.messages.create(
         :body => "Your cure8 one time password is #{one_time_password}.",
-        :to => phone,
+        :to => params[:user][:phone],
         # :from => "+15005550006"
         :from => "+61429806720"
         )
