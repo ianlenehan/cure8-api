@@ -76,7 +76,7 @@ module Api::V1
 
     def one_time_password
       code = rand(100000..999999)
-      user.update(code: code, code_valid: true)
+      found_user.update(code: code, code_valid: true)
       code
     end
 
@@ -86,7 +86,7 @@ module Api::V1
     end
 
     def remove_user_from_groups(contact_id)
-      user_by_id.groups.each do |group|
+      user.groups.each do |group|
         if group.members and group.members.include? contact_id
           group.members.delete contact_id
           group.save
