@@ -2,7 +2,7 @@ module Api::V1
   class UsersController < ApplicationController
     def request_one_time_password
       # phone = params[:user][:phone]
-      # user.update(code: '1234', code_valid: true)
+      # found_user.update(code: '1234', code_valid: true)
       buttonText = does_user_have_account
       @client = Twilio::REST::Client.new twilio[:account_sid], twilio[:auth_token]
       message = @client.account.messages.create(
@@ -81,7 +81,7 @@ module Api::V1
     end
 
     def does_user_have_account
-      return 'Login' if user.first_name
+      return 'Login' if found_user.first_name
       return 'Create Account'
     end
 
