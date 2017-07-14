@@ -7,6 +7,7 @@ module Api::V1
       if user.present?
         token = user.authenticate(params[:user][:code])
         if token
+          user.update(code_valid: false)
           session[:user_id] = user.id
           render json: { token: token, user: safe_user(user), status: 200 }
         else

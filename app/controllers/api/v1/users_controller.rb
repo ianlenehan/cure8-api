@@ -14,6 +14,7 @@ module Api::V1
       render json: { buttonText: buttonText, status: 200 }
     end
 
+    # TODO do I need this? 
     def authenticate
       code = params[:user][:code]
       found_user.code_valid && found_user.code == code

@@ -60,7 +60,7 @@ class User < ApplicationRecord
     contacts = self.groups.map do |group|
       if group.user_id
         contact = User.find(group.user_id)
-        { name: group.name, phone: contact.phone, id: group.id }
+        { name: group.name, phone: contact.phone, id: group.id, member: group.is_member? }
       end
     end
     contacts.compact.sort_by { |contact| contact[:name] }
