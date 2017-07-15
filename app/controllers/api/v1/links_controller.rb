@@ -16,6 +16,15 @@ module Api::V1
       render json: { links: user.links.reverse, status: 200 }
     end
 
+    def create_link_from_web
+      user = User.find(params[:id])
+      comment = 'Saved from the web'
+      link = find_or_create_link(user, params)
+      Curation.create(user_id: user.id, link_id: link.id, comment: comment)
+
+      render json: { links: user.links.reverse, status: 200 }
+    end
+
     def get_links
       user = User.find(params[:user_id])
       if user.links.any?
@@ -112,7 +121,7 @@ module Api::V1
       return link if link
 
       newLink = Link.create(
-        url: params[:link][:url],
+        url: link_params[:url],
         link_owner: owner.id
       )
       get_link_data(newLink)
