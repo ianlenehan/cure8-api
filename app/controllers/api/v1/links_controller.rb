@@ -17,7 +17,7 @@ module Api::V1
     end
 
     def create_link_from_web
-      user = User.find(params[:id])
+      user = User.find_by(access_token: params[:token])
       comment = 'Saved from the web'
       link = find_or_create_link(user, params)
       Curation.create(user_id: user.id, link_id: link.id, comment: comment)
@@ -39,15 +39,20 @@ module Api::V1
       user = User.find(curation.user_id)
       rating = params[:curation][:rating]
       action = params[:curation][:action]
-      notify = curation.rating ? false : true
 
       if curation.update(status: action, rating: rating)
-        rating_notification(user, curation, rating) if notify
+        rating_notification(user, curation, rating) if notify(user, curation)
         render json: { links: user.links.reverse, status: 200 }
       end
     end
 
     private
+
+    def notify(user, curation)
+      not_rated = curation.rating == nil
+      not_same_user = user.id != curation.user_id
+      not_rated && not_same_user
+    end
 
     # TODO refactor this method
     def create_curations(group_ids, comment, link)
