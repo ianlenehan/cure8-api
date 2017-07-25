@@ -20,6 +20,7 @@ gem 'twilio-ruby', '~> 5.0.0.rc5'
 gem 'jwt'
 gem 'metainspector'
 gem 'exponent-server-sdk'
+gem 'foreman', '~> 0.82.0'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
