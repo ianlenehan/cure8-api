@@ -105,7 +105,7 @@ module Api::V1
         reaction = rating == 1 ? "thumbs up" : "thumbs down"
         link = Link.find(curation.link_id)
         curator = User.find(link.link_owner)
-        message = "#{user.name} gave your curation about #{link.title} a #{reaction}"
+        message = "#{reaction} from #{user.name} for #{link.title}"
         send_notification(curator, message)
       end
     end
