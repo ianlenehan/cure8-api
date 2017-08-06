@@ -20,13 +20,14 @@ module Api::V1
 
     def destroy
       session[:user_id] = nil
-      user.destroy_access_token
+      destroy_access_token
       render json: { text: "User logged out", status: 200 }
     end
 
     def verify_access_token
-      user = User.find_by(access_token: params[:access_token])
-      if user
+      token = params[:user][:token]
+      user = get_user_from_token(token)
+      if user && user.tokens.include?(token)
         render text: "verified", status: 200
       else
         render text: "Token failed verification", status: 422
@@ -38,6 +39,11 @@ module Api::V1
       { id: user.id, name: user.name, phone: user.phone, shares: user.shares }
     end
 
+    def destroy_access_token
+      user = get_user_from_token(params[:user][:token])
+      user.tokens.delete(params[:user][:token])
+    end
+
     def find_and_update_user
       user = User.find_by :phone => params[:user][:phone]
       if !user.first_name
@@ -47,6 +53,5 @@ module Api::V1
       end
       user
     end
-
   end
 end

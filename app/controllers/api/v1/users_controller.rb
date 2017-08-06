@@ -1,20 +1,20 @@
 module Api::V1
   class UsersController < ApplicationController
     def request_one_time_password
-      # phone = params[:user][:phone]
-      # found_user.update(code: '1234', code_valid: true)
+      phone = params[:user][:phone]
+      found_user.update(code: '1234', code_valid: true)
       buttonText = does_user_have_account
-      @client = Twilio::REST::Client.new twilio[:account_sid], twilio[:auth_token]
-      message = @client.account.messages.create(
-        :body => "Your cure8 one time password is #{one_time_password}.",
-        :to => params[:user][:phone],
-        # :from => "+15005550006"
-        :from => "+61429806720"
-        )
+      # @client = Twilio::REST::Client.new twilio[:account_sid], twilio[:auth_token]
+      # message = @client.account.messages.create(
+      #   :body => "Your cure8 one time password is #{one_time_password}.",
+      #   :to => params[:user][:phone],
+      #   # :from => "+15005550006"
+      #   :from => "+61429806720"
+      #   )
       render json: { buttonText: buttonText, status: 200 }
     end
 
-    # TODO do I need this? 
+    # TODO do I need this?
     def authenticate
       code = params[:user][:code]
       found_user.code_valid && found_user.code == code
@@ -68,11 +68,11 @@ module Api::V1
     private
 
     def found_user
-      @found_user || User.find_or_create_by(phone: params[:user][:phone])
+      @found_user ||= User.find_or_create_by(phone: params[:user][:phone])
     end
 
     def user
-      @user || User.find(params[:user][:id])
+      @user ||= get_user_from_token(params[:user][:token])
     end
 
     def one_time_password

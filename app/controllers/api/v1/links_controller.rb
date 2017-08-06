@@ -3,50 +3,71 @@ module Api::V1
 
     # POST /v1/links/create
     def create_link
-      user = User.find(params[:user][:id])
-      contacts = params[:link][:contacts]
-      comment = params[:link][:comment]
-      link = find_or_create_link(user, params[:link])
+      if valid_token
+        contacts = params[:link][:contacts]
+        comment = params[:link][:comment]
+        link = find_or_create_link(user, params[:link])
 
-      create_curations(contacts, comment, link)
-      if params[:link][:save_to_my_links]
-        Curation.create(user_id: user.id, link_id: link.id, comment: comment)
+        create_curations(contacts, comment, link)
+        if params[:link][:save_to_my_links]
+          Curation.create(user_id: user.id, link_id: link.id, comment: comment)
+        end
+
+        render json: { links: user.links.reverse, status: 200 }
+      else
+        render json: { status: 401 }
       end
-
-      render json: { links: user.links.reverse, status: 200 }
     end
 
     def create_link_from_web
-      user = User.find_by(access_token: params[:token])
-      comment = 'Saved from the web'
-      link = find_or_create_link(user, params)
-      Curation.create(user_id: user.id, link_id: link.id, comment: comment)
+      if valid_token
+        comment = 'Saved from the web'
+        link = find_or_create_link(user, params[:link])
+        Curation.create(user_id: user.id, link_id: link.id, comment: comment)
 
-      render json: { links: user.links.reverse, status: 200 }
+        render json: { links: user.links.reverse, status: 200 }
+      else
+        render json: { status: 401 }
+      end
     end
 
     def get_links
-      user = User.find(params[:user_id])
-      if user.links.any?
-        render json: { links: user.links.reverse, status: 200 }
+      if valid_token
+        if user.links.any?
+          render json: { links: user.links.reverse, status: 200 }
+        else
+          render json: { status: 204 }
+        end
       else
-        render json: { status: 204 }
+        render json: { status: 401 }
       end
     end
 
     def archive
-      curation = Curation.find(params[:curation][:id])
-      user = User.find(curation.user_id)
-      rating = params[:curation][:rating]
-      action = params[:curation][:action]
+      if valid_token
+        curation = Curation.find(params[:curation][:id])
+        user = User.find(curation.user_id)
+        rating = params[:curation][:rating]
+        action = params[:curation][:action]
 
-      if curation.update(status: action, rating: rating)
-        rating_notification(user, curation, rating) if notify(user, curation)
-        render json: { links: user.links.reverse, status: 200 }
+        if curation.update(status: action, rating: rating)
+          rating_notification(user, curation, rating) if notify(user, curation)
+          render json: { links: user.links.reverse, status: 200 }
+        end
+      else
+        render json: { status: 401 }
       end
     end
 
     private
+
+    def user
+      @user ||= get_user_from_token(params[:user][:token])
+    end
+
+    def valid_token
+      @valid_token ||= user.tokens.include? params[:user][:token]
+    end
 
     def notify(user, curation)
       not_rated = curation.rating == nil

@@ -37,7 +37,7 @@ module Api::V1
     private
 
     def user
-      @user ||= User.find(params[:user][:id])
+      @user ||= get_user_from_token(params[:user][:token])
     end
 
     def find_or_create_contact(phone)

@@ -14,12 +14,8 @@ class User < ApplicationRecord
   def generate_access_token
     payload = { :id => self.id }
     token = JWT.encode payload, hmac_secret, 'HS256'
-    self.update(access_token: token)
+    self.tokens.push(token)
     token
-  end
-
-  def destroy_access_token
-    self.access_token = nil
   end
 
   def links
