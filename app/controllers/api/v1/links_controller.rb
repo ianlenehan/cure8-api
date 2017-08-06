@@ -66,7 +66,7 @@ module Api::V1
     end
 
     def valid_token
-      @valid_token ||= user.tokens.include? params[:user][:token]
+      @valid_token ||= user.tokens.include?(params[:user][:token])
     end
 
     def notify(user, curation)

@@ -45,7 +45,8 @@ module Api::V1
       notifications = {
         push: user.notifications,
         curation: user.notifications_new_link,
-        rating: user.notifications_new_rating
+        rating: user.notifications_new_rating,
+        show_tour: user.show_tour
       }
       render json: {
         stats: user.stats,
