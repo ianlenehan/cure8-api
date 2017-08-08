@@ -40,8 +40,10 @@ module Api::V1
     end
 
     def destroy_access_token
-      user = get_user_from_token(params[:user][:token])
-      user.tokens.delete(params[:user][:token])
+      token = params[:user][:token]
+      user = get_user_from_token(token)
+      user.tokens.delete(token)
+      user.save
     end
 
     def find_and_update_user

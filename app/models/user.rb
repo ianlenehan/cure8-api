@@ -12,7 +12,7 @@ class User < ApplicationRecord
   end
 
   def generate_access_token
-    payload = { :id => self.id }
+    payload = { :id => self.id, :time => Time.now }
     token = JWT.encode payload, hmac_secret, 'HS256'
     self.tokens.push(token)
     token
