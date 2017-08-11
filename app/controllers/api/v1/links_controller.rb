@@ -114,7 +114,9 @@ module Api::V1
     end
 
     def new_link_notification(user, link)
+      puts "new link notificaion ian"
       if user.notifications_new_link
+        puts "yes new link notificaion ian"
         curator = User.find(link.link_owner)
         message = "#{curator.name} has curated a new link for you: '#{link.title}'"
         send_notification(user, message)
@@ -132,7 +134,9 @@ module Api::V1
     end
 
     def send_notification(user, message)
+      puts "in send notifications ian"
       if user.notifications
+        puts "user has notifications turned on ian #{user.push_token} #{message}"
         exponent.publish(
         exponentPushToken: user.push_token,
         message: message,
