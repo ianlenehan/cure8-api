@@ -136,7 +136,7 @@ module Api::V1
     def send_notification(user, message)
       puts "in send notifications ian"
       if user.notifications
-        puts "user has notifications turned on ian #{user.push_token} #{message}"
+        puts "user has notifications turned on ian #{user.push_token} #{message} ??"
         exponent.publish(
         exponentPushToken: user.push_token,
         message: message,
