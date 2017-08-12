@@ -132,12 +132,13 @@ module Api::V1
     end
 
     def send_notification(user, message)
+      messages = [{
+        "to": user.push_token,
+        "badge": 1,
+        "body:" message
+        }]
       if user.notifications
-        exponent.publish(
-        exponentPushToken: user.push_token,
-        message: message,
-        data: { text: message }, # Data is required, pass any arbitrary data to include with the notification
-        )
+        push_notification.publish(messages)
       end
     end
 
@@ -176,8 +177,8 @@ module Api::V1
       }
     end
 
-    def exponent
-      @exponent ||= Exponent::Push::Client.new
+    def push_notification
+      @push_notification ||= PushNotificationService.new
     end
   end
 end

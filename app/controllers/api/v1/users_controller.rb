@@ -21,7 +21,7 @@ module Api::V1
     end
 
     def add_push_token
-      token = params[:token][:token]
+      token = params[:token][:push_token]
       user.update(push_token: token)
       render json: { status: 200 }
     end

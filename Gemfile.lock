@@ -54,8 +54,6 @@ GEM
     domain_name (0.5.20170404)
       unf (>= 0.0.5, < 1.0.0)
     erubis (2.7.0)
-    exponent-server-sdk (0.0.2)
-      httparty
     factory_girl (4.7.0)
       activesupport (>= 3.0.0)
     factory_girl_rails (4.7.0)
@@ -82,7 +80,7 @@ GEM
       activesupport (>= 4.1.0)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
-    httparty (0.15.5)
+    httparty (0.15.6)
       multi_xml (>= 0.5.2)
     i18n (0.8.1)
     json (1.8.3)
@@ -209,10 +207,10 @@ PLATFORMS
 DEPENDENCIES
   active_model_serializers
   byebug
-  exponent-server-sdk
   factory_girl_rails
   faker
   foreman (~> 0.82.0)
+  httparty
   jwt
   listen (~> 3.0.5)
   metainspector
