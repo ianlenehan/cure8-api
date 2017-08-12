@@ -135,7 +135,7 @@ module Api::V1
       messages = [{
         "to": user.push_token,
         "badge": 1,
-        "body:" message
+        "body": message
         }]
       if user.notifications
         push_notification.publish(messages)
