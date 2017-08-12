@@ -154,7 +154,8 @@ module Api::V1
       get_link_data(newLink)
     end
 
-    def format_url(url)
+    def format_url(link)
+      url = link.split(' ').last
       if url.slice(0, 4) == 'http'
         url
       else
