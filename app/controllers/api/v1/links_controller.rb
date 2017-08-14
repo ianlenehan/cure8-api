@@ -53,7 +53,7 @@ module Api::V1
         notify_curator = notify(curation)
 
         if curation.update(status: action, rating: rating)
-          rating_notification(curation, rating) if !notify_curator
+          rating_notification(curation, rating) if notify_curator
           render json: { links: user.links.reverse, status: 200 }
         end
       else
@@ -139,7 +139,7 @@ module Api::V1
 
     def rating_notification(curation, rating)
       if curator.notifications_new_rating
-        reaction = rating == 1 ? "thumbs up" : "thumbs down"
+        reaction = rating == 1 ? "Thumbs up" : "Thumbs down"
         link = Link.find(curation.link_id)
         message = "#{reaction} from #{user.name} for #{link.title}"
         send_notification(curator, message)
