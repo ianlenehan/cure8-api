@@ -50,8 +50,10 @@ module Api::V1
         rating = params[:curation][:rating]
         action = params[:curation][:action]
 
+        notify_curator = notify(curation)
+
         if curation.update(status: action, rating: rating)
-          rating_notification(user, curation, rating) if notify(user, curation)
+          rating_notification(curation, rating) if !notify_curator
           render json: { links: user.links.reverse, status: 200 }
         end
       else
@@ -65,13 +67,27 @@ module Api::V1
       @user ||= get_user_from_token(params[:user][:token])
     end
 
-    def valid_token
-      @valid_token ||= user.tokens.include?(params[:user][:token])
+    def curator
+      @curator ||= User.find(link.link_owner)
     end
 
-    def notify(user, curation)
+    def link
+      curation = Curation.find(params[:curation][:id])
+      @link ||= Link.find(curation.link_id)
+    end
+
+    def valid_token
+      token = params[:user][:token]
+      if token.length > 0
+        user.tokens.include?(token)
+      else
+        false
+      end
+    end
+
+    def notify(curation)
       not_rated = curation.rating == nil
-      not_same_user = user.id != curation.user_id
+      not_same_user = user.id != curator.id
       not_rated && not_same_user
     end
 
@@ -121,11 +137,10 @@ module Api::V1
       end
     end
 
-    def rating_notification(user, curation, rating)
-      if user.notifications_new_rating
+    def rating_notification(curation, rating)
+      if curator.notifications_new_rating
         reaction = rating == 1 ? "thumbs up" : "thumbs down"
         link = Link.find(curation.link_id)
-        curator = User.find(link.link_owner)
         message = "#{reaction} from #{user.name} for #{link.title}"
         send_notification(curator, message)
       end
