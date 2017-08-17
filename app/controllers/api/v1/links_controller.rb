@@ -130,7 +130,7 @@ module Api::V1
     end
 
     def new_link_notification(user, link)
-      if user.notifications_new_link
+      if user.notifications_new_link && user.push_token
         curator = User.find(link.link_owner)
         message = "#{curator.name} has curated a new link for you: '#{link.title}'"
         send_notification(user, message)
@@ -138,7 +138,7 @@ module Api::V1
     end
 
     def rating_notification(curation, rating)
-      if curator.notifications_new_rating
+      if curator.notifications_new_rating && curator.push_token
         reaction = rating == 1 ? "Thumbs up" : "Thumbs down"
         link = Link.find(curation.link_id)
         message = "#{reaction} from #{user.name} for #{link.title}"
