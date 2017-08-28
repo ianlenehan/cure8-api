@@ -2,6 +2,7 @@ class User < ApplicationRecord
   validates :phone, presence: true
   has_many :curations
   has_many :links, through: :curations
+  has_many :tokens
 
   def name
     self.first_name + ' ' + self.last_name
