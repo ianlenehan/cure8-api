@@ -64,7 +64,11 @@ module Api::V1
     private
 
     def user
-      @user ||= get_user_from_token(params[:user][:token])
+      @user ||= db_token.user
+    end
+
+    def db_token
+      @db_token ||= Token.find_by(token: params[:user][:token])
     end
 
     def curator
@@ -78,8 +82,8 @@ module Api::V1
 
     def valid_token
       token = params[:user][:token]
-      if token.length > 0
-        user.tokens.include?(token)
+      if !token.empty?
+        user.tokens.include?(db_token)
       else
         false
       end
@@ -132,8 +136,12 @@ module Api::V1
     def new_link_notification(user, link)
       if user.notifications_new_link && user.push_token
         curator = User.find(link.link_owner)
-        message = "#{curator.name} has curated a new link for you: '#{link.title}'"
-        send_notification(user, message)
+        details = {
+          from: user.name,
+          title: link.title,
+          type: 'curation'
+        }
+        send_notification(user, details)
       end
     end
 
@@ -141,19 +149,21 @@ module Api::V1
       if curator.notifications_new_rating && curator.push_token
         reaction = rating == 1 ? "Thumbs up" : "Thumbs down"
         link = Link.find(curation.link_id)
-        message = "#{reaction} from #{user.name} for #{link.title}"
-        send_notification(curator, message)
+        details = {
+          from: user.name,
+          title: link.title,
+          type: 'rating',
+          reaction: reaction
+        }
+        send_notification(curator, details)
       end
     end
 
-    def send_notification(user, message)
-      messages = [{
-        "to": user.push_token,
-        "badge": 1,
-        "body": message
-        }]
+    def send_notification(user, details)
       if user.notifications
-        push_notification.publish(messages)
+        user.push_tokens.each do |push_token|
+          push_notification.publish(push_token.token, details)
+        end
       end
     end
 

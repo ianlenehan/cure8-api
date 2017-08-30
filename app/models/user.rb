@@ -2,6 +2,7 @@ class User < ApplicationRecord
   validates :phone, presence: true
   has_many :curations
   has_many :links, through: :curations
+  has_many :tokens, dependent: :destroy
 
   def name
     self.first_name + ' ' + self.last_name
@@ -14,7 +15,7 @@ class User < ApplicationRecord
   def generate_access_token
     payload = { :id => self.id, :time => Time.now }
     token = JWT.encode payload, hmac_secret, 'HS256'
-    self.tokens.push(token)
+    self.tokens.create(token: token, token_type: 'auth')
     token
   end
 
@@ -88,6 +89,14 @@ class User < ApplicationRecord
       score = 0
     end
     { curations: curation_count, score: score, archived: archived_count, ratings: rating_count }
+  end
+
+  def push_tokens
+    self.tokens.where(token_type: 'push')
+  end
+
+  def auth_tokens
+    self.tokens.where(token_type: 'auth')
   end
 
   private

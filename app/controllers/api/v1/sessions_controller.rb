@@ -25,9 +25,8 @@ module Api::V1
     end
 
     def verify_access_token
-      token = params[:user][:token]
-      user = get_user_from_token(token)
-      if user && user.tokens.include?(token)
+      user = db_token.user
+      if user
         render text: "verified", status: 200
       else
         render text: "Token failed verification", status: 422
@@ -35,15 +34,17 @@ module Api::V1
     end
 
     private
+
+    def db_token
+      @db_token ||= Token.find_by(token: params[:user][:token])
+    end
+
     def safe_user(user)
       { id: user.id, name: user.name, phone: user.phone, shares: user.shares }
     end
 
     def destroy_access_token
-      token = params[:user][:token]
-      user = get_user_from_token(token)
-      user.tokens.delete(token)
-      user.save
+      db_token.destroy
     end
 
     def find_and_update_user

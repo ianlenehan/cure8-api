@@ -3,13 +3,19 @@ class PushNotificationService
     @http_client = new_http_client || HTTParty
   end
 
-  def publish(messages)
-    response = @http_client.post('https://exp.host/--/api/v2/push/send',
-      body: messages.to_json,
+  def publish(user_token, details)
+    body_content = {
+      'app_id' => onesignal[:app_id],
+      'include_player_ids' => [user_token],
+      'contents' => { 'en': details[:title] },
+      'headings' => { 'en': get_heading(details) }
+    }
+
+    response = @http_client.post(post_url,
+      body: body_content.to_json,
       headers: {
         'Content-Type' => 'application/json',
-        'Accept' => 'application/json',
-        'Accept-Encoding' => 'gzip, deflate'
+        'Authorization' => "Basic #{onesignal[:rest_api_key]}",
       }
     )
 
@@ -17,6 +23,25 @@ class PushNotificationService
       when 400
         raise PushNotificationService::Errors::InvalidPushTokenError
     end
+  end
+
+  def get_heading(details)
+    if (details[:type] == 'rating')
+      "#{details[:reaction]} from #{details[:from]}"
+    elsif (details[:type] == 'curation')
+      "New curation from #{details[:from]}"
+    end
+  end
+
+  def post_url
+    'https://onesignal.com/api/v1/notifications'
+  end
+
+  def onesignal
+    {
+      app_id: '5a76b673-d57e-423e-92b0-e1375989bcb0',
+      rest_api_key: 'MTFlNjc3NzAtYjQ5My00MWYwLWI2MWEtMjk4NTlmYTE1MTU2'
+    }
   end
 
   module Errors
