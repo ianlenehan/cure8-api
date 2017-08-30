@@ -64,7 +64,11 @@ module Api::V1
     private
 
     def user
-      @user ||= get_user_from_token(params[:user][:token])
+      @user ||= db_token.user
+    end
+
+    def db_token
+      @db_token ||= Token.find_by(token: params[:user][:token])
     end
 
     def curator
@@ -78,8 +82,8 @@ module Api::V1
 
     def valid_token
       token = params[:user][:token]
-      if token.length > 0
-        user.tokens.include?(token)
+      if !token.empty?
+        user.tokens.include?(db_token)
       else
         false
       end
@@ -157,7 +161,9 @@ module Api::V1
 
     def send_notification(user, details)
       if user.notifications
-        push_notification.publish(user.push_token, details)
+        user.push_tokens.each do |push_token|
+          push_notification.publish(push_token.token, details)
+        end
       end
     end
 

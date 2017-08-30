@@ -21,8 +21,8 @@ module Api::V1
     end
 
     def add_push_token
-      token = params[:token][:push_token]
-      user.update(push_token: token)
+      push_token = params[:token][:push_token]
+      user.tokens.create(token: push_token, token_type: 'push')
       render json: { status: 200 }
     end
 
@@ -73,7 +73,11 @@ module Api::V1
     end
 
     def user
-      @user ||= get_user_from_token(params[:user][:token])
+      @user ||= db_token.user
+    end
+
+    def db_token
+      @db_token ||= Token.find_by(token: params[:user][:token])
     end
 
     def one_time_password
