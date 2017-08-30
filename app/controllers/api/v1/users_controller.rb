@@ -26,10 +26,6 @@ module Api::V1
       render json: { status: 200 }
     end
 
-    def update
-      user.update(update_params)
-    end
-
     def get_contacts
       render json: { contacts: user.contacts.compact, groups: user.contact_groups, status: 200 }
     end
@@ -61,8 +57,11 @@ module Api::V1
       field = params[:user][:field]
       symbol = "#{field}".to_sym
       value = params[:user][:value]
-
-      user.update_attribute(symbol, value)
+      if field == 'push'
+        user.tokens.create(token: value, token_type: 'push')
+      else
+        user.update_attribute(symbol, value)
+      end
       get_user_info
     end
 
