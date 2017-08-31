@@ -8,6 +8,7 @@ namespace :tokens do
         puts "#{count} tokens migrated for #{user.name}"
         count += 1
       end
+      user.update(tokens_old: [])
     end
   end
 
@@ -15,6 +16,8 @@ namespace :tokens do
     User.all.each do |user|
       user.tokens.create(token: user.push_token, token_type: 'push') if user.push_token
       puts "Push tokens migrated for #{user.name}"
+
+      user.update(push_token: '')
     end
   end
 end
