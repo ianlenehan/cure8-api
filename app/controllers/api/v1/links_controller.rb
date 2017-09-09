@@ -118,16 +118,15 @@ module Api::V1
       end
     end
 
-    def send_sms(user_id, link_id)
+    def send_sms(recipient_id, link_id)
       curator_id = Link.find(link_id).link_owner
       curator = User.find(curator_id)
-      user = User.find(user_id)
-      if !user.first_name
+      recipient = User.find(user_id)
+      if !recipient.first_name
         @client = Twilio::REST::Client.new twilio[:account_sid], twilio[:auth_token]
         message = @client.account.messages.create(
         :body => "Your friend #{curator.name} has saved a link for you on cure8. Download the Cure8 app from the App Store or Google Play Store to view the link and start curating content for your friends!",
-        :to => user.phone,
-        # :from => "+15005550006"
+        :to => recipient.phone,
         :from => "+61429806720"
         )
       end
@@ -145,7 +144,7 @@ module Api::V1
     end
 
     def rating_notification(curation, rating)
-      if curator.notifications_new_rating && curator.push_token
+      if curator.notifications_new_rating && curator.push_tokens.length
         reaction = rating == 1 ? "Thumbs up" : "Thumbs down"
         link = Link.find(curation.link_id)
         details = {
