@@ -121,7 +121,7 @@ module Api::V1
     def send_sms(recipient_id, link_id)
       curator_id = Link.find(link_id).link_owner
       curator = User.find(curator_id)
-      recipient = User.find(user_id)
+      recipient = User.find(recipient_id)
       if !recipient.first_name
         @client = Twilio::REST::Client.new twilio[:account_sid], twilio[:auth_token]
         message = @client.account.messages.create(
