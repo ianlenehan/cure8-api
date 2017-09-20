@@ -22,7 +22,9 @@ module Api::V1
 
     def add_push_token
       push_token = params[:token][:push_token]
-      user.tokens.create(token: push_token, token_type: 'push')
+      if !Token.where(token: push_token).exists?
+        user.tokens.create(token: push_token, token_type: 'push')
+      end
       render json: { status: 200 }
     end
 
