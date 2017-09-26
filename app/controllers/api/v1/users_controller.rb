@@ -20,8 +20,7 @@ module Api::V1
       found_user.code_valid && found_user.code == code
     end
 
-    def add_push_token
-      push_token = params[:user][:push]
+    def add_push_token(push_token)
       if !Token.where(token: push_token).exists?
         user.tokens.create(token: push_token, token_type: 'push')
       end
@@ -60,11 +59,11 @@ module Api::V1
       symbol = "#{field}".to_sym
       value = params[:user][:value]
       if field == 'push'
-        user.tokens.create(token: value, token_type: 'push')
+        add_push_token(value)
       else
         user.update_attribute(symbol, value)
+        get_user_info
       end
-      get_user_info
     end
 
     private
