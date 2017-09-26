@@ -21,7 +21,7 @@ module Api::V1
     end
 
     def add_push_token
-      push_token = params[:token][:push]
+      push_token = params[:user][:push]
       if !Token.where(token: push_token).exists?
         user.tokens.create(token: push_token, token_type: 'push')
       end
