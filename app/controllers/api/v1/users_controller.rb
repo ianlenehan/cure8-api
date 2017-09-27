@@ -21,7 +21,9 @@ module Api::V1
     end
 
     def add_push_token(push_token)
+      puts "adding push token --??"
       if !Token.where(token: push_token).exists?
+        puts "says here token does not exist --?? token: #{push_token}"
         user.tokens.create(token: push_token, token_type: 'push')
       end
       render json: { status: 200 }
@@ -58,7 +60,9 @@ module Api::V1
       field = params[:user][:field]
       symbol = "#{field}".to_sym
       value = params[:user][:value]
+      puts "updating user --??"
       if field == 'push'
+        puts "field is push --??"
         add_push_token(value)
       else
         user.update_attribute(symbol, value)
