@@ -5,12 +5,17 @@ module Api::V1
       # found_user.update(code: '1234', code_valid: true)
       buttonText = does_user_have_account
       @client = Twilio::REST::Client.new twilio[:account_sid], twilio[:auth_token]
-      message = @client.account.messages.create(
-        :body => "Your cure8 one time password is #{one_time_password}.",
-        :to => params[:user][:phone],
-        # :from => "+15005550006"
-        :from => "+61429806720"
-        )
+
+      begin
+        message = @client.account.messages.create(
+          :body => "Your cure8 one time password is #{one_time_password}.",
+          :to => params[:user][:phone],
+          # :from => "+15005550006"
+          :from => "+61429806720"
+          )
+      rescue Twilio::REST::TwilioError => e
+        puts e.message
+      end
       render json: { buttonText: buttonText, status: 200 }
     end
 
@@ -21,9 +26,7 @@ module Api::V1
     end
 
     def add_push_token(push_token)
-      puts "adding push token --??"
-      if !Token.where(token: push_token).exists?
-        puts "says here token does not exist --?? token: #{push_token}"
+      if push_token && !Token.where(token: push_token).exists?
         user.tokens.create(token: push_token, token_type: 'push')
       end
       render json: { status: 200 }
@@ -60,9 +63,7 @@ module Api::V1
       field = params[:user][:field]
       symbol = "#{field}".to_sym
       value = params[:user][:value]
-      puts "updating user --??"
       if field == 'push'
-        puts "field is push --??"
         add_push_token(value)
       else
         user.update_attribute(symbol, value)
