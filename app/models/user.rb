@@ -46,7 +46,7 @@ class User < ApplicationRecord
       }
       link_for_app
     end
-    links.sort_by { |link| link[:date_added] }
+    links.sort_by { |link| link[:date_added] }.reverse
   end
 
   def groups
@@ -74,7 +74,7 @@ class User < ApplicationRecord
 
   def stats
     links = Link.where(link_owner: self.id)
-    curations = links.map { |link| link.curations.count }
+    curations = links.map { |link| link.archived_curations.count }
     ratings = links.map do |link|
       link.curations.map do |curation|
         curation.rating.to_f if curation.rating

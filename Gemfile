@@ -16,7 +16,7 @@ gem 'puma', '~> 3.0'
 # gem 'devise'
 gem 'active_model_serializers'
 
-gem 'twilio-ruby', '~> 5.0.0.rc5'
+gem 'twilio-ruby', '~> 5.4.0'
 gem 'jwt'
 gem 'metainspector'
 gem 'httparty'
