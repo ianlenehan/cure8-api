@@ -13,7 +13,7 @@ module Api::V1
           Curation.create(user_id: user.id, link_id: link.id, comment: comment)
         end
 
-        render json: { links: user.links.reverse, status: 200 }
+        render json: { links: user.links, status: 200 }
       else
         render json: { status: 401 }
       end
@@ -25,7 +25,7 @@ module Api::V1
         link = find_or_create_link(user, params[:link])
         Curation.create(user_id: user.id, link_id: link.id, comment: comment)
 
-        render json: { links: user.links.reverse, status: 200 }
+        render json: { links: user.links, status: 200 }
       else
         render json: { status: 401 }
       end
@@ -34,7 +34,7 @@ module Api::V1
     def get_links
       if valid_token
         if user.links.any?
-          render json: { links: user.links.reverse, status: 200 }
+          render json: { links: user.links, status: 200 }
         else
           render json: { status: 204 }
         end
@@ -54,7 +54,7 @@ module Api::V1
 
         if curation.update(status: action, rating: rating)
           rating_notification(curation, rating) if notify_curator
-          render json: { links: user.links.reverse, status: 200 }
+          render json: { links: user.links, status: 200 }
         end
       else
         render json: { status: 401 }
