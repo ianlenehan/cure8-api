@@ -3,19 +3,24 @@ module Api::V1
     def request_one_time_password
       # phone = params[:user][:phone]
       # found_user.update(code: '1234', code_valid: true)
-      buttonText = does_user_have_account
+      message = does_user_have_account
+      status = 200
       @client = Twilio::REST::Client.new twilio[:account_sid], twilio[:auth_token]
 
       begin
-        message = @client.api.account.messages.create(
-          from: "+61429806720"
+        @client.api.account.messages.create(
+          from: twilio_phone,
           to: params[:user][:phone],
-          body: "Your cure8 one time password is #{one_time_password}.",
+          body: "Your Cure8 one time password is #{one_time_password}.",
         )
-      rescue Twilio::REST::TwilioError => e
-        puts e.message
+      rescue Twilio::REST::TwilioError => error
+        puts error.message
       end
-      render json: { buttonText: buttonText, status: 200 }
+      if error
+        message = error.message
+        status = error.status_code
+      end
+      render json: { message: message, status: status }
     end
 
     # TODO do I need this?
@@ -109,6 +114,14 @@ module Api::V1
         account_sid: Rails.application.secrets.twilio_account_sid,
         auth_token: Rails.application.secrets.twilio_auth_token
       }
+    end
+
+    def twilio_phone
+      if params[:user][:phone].split('')[1] === '1'
+        '+17608198213'
+      else
+        '+61429806720'
+      end
     end
 
   end
