@@ -184,7 +184,9 @@ module Api::V1
     def format_url(link)
       url = link.split(' ').last
       if url.slice(0, 4) == 'http'
-        url
+        # apple news urls sometimes have link twice
+        # eg https://someurl.comhttps://someurl.com
+        'http' + url.split('http').last
       else
         "http://#{url}"
       end
