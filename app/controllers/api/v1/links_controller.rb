@@ -124,10 +124,10 @@ module Api::V1
       recipient = User.find(recipient_id)
       if !recipient.first_name
         @client = Twilio::REST::Client.new twilio[:account_sid], twilio[:auth_token]
-        message = @client.account.messages.create(
-        :body => "Your friend #{curator.name} has saved a link for you on cure8. Download the Cure8 app from the App Store or Google Play Store to view the link and start curating content for your friends!",
-        :to => recipient.phone,
-        :from => "+61429806720"
+        message = @client.api.account.messages.create(
+        body: "Your friend #{curator.name} has saved a link for you on Cure8. Download the Cure8 app from the iOS App Store to view the link and start curating content for your friends! Android app coming soon.",
+        to: recipient.phone,
+        from: twilio_phone(recipient)
         )
       end
     end
@@ -201,6 +201,14 @@ module Api::V1
         account_sid: Rails.application.secrets.twilio_account_sid,
         auth_token: Rails.application.secrets.twilio_auth_token
       }
+    end
+
+    def twilio_phone(recipient)
+      if recipient.phone.split('')[1] === '1'
+        '+17608198213'
+      else
+        '+61429806720'
+      end
     end
 
     def push_notification
