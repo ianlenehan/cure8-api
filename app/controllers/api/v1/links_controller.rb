@@ -134,7 +134,6 @@ module Api::V1
 
     def new_link_notification(recipient, link)
       if recipient.notifications_new_link && recipient.push_token
-        puts "send new link notification --??"
         details = {
           from: user.name,
           title: link.title,
@@ -146,7 +145,6 @@ module Api::V1
 
     def rating_notification(curation, rating)
       if curator.notifications_new_rating && curator.push_tokens.length
-        puts "send rating notification --??"
         reaction = rating == 1 ? "Thumbs up" : "Thumbs down"
         link = Link.find(curation.link_id)
         details = {
@@ -160,10 +158,8 @@ module Api::V1
     end
 
     def send_notification(recipient, details)
-      puts "send notification --??"
       if recipient.notifications
         recipient.push_tokens.each do |push_token|
-          puts "--?? sending notification, token: #{push_token.token}"
           push_notification.publish(push_token.token, details)
         end
       end
@@ -175,7 +171,7 @@ module Api::V1
       return link if link
 
       newLink = Link.create(
-        url: link_params[:url],
+        url: url,
         link_owner: owner.id
       )
       get_link_data(newLink)
