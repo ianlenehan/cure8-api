@@ -133,7 +133,7 @@ module Api::V1
     end
 
     def new_link_notification(recipient, link)
-      if recipient.notifications_new_link && recipient.push_token
+      if recipient.notifications_new_link && recipient.push_tokens.length
         details = {
           from: user.name,
           title: link.title,
