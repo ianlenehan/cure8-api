@@ -125,7 +125,7 @@ module Api::V1
       if !recipient.first_name
         @client = Twilio::REST::Client.new twilio[:account_sid], twilio[:auth_token]
         message = @client.api.account.messages.create(
-        body: "Your friend #{curator.name} has saved a link for you on Cure8. Download the Cure8 app from the iOS App Store (http://apple.co/2lhMjAq) to view the link and start curating content for your friends! Android app coming soon.",
+        body: "Your friend #{curator.name} has saved a link for you on Cure8. Download the Cure8 app from the iOS App Store (http://apple.co/2lhMjAq) or Google Play store (https://goo.gl/mdNbxz) to view the link and start curating content for your friends!",
         to: recipient.phone,
         from: twilio_phone(recipient)
         )
