@@ -103,7 +103,12 @@ module Api::V1
           if group.user_id
             recipient = User.find(group.user_id)
             new_link_notification(recipient, link)
-            Curation.create(user_id: group.user_id, link_id: link.id, comment: comment)
+            Curation.create(
+              user_id: group.user_id,
+              curator_id: user.id,
+              link_id: link.id,
+              comment: comment
+            )
             send_sms(group.user_id, link.id)
           else
             group.members.each do |member_id|

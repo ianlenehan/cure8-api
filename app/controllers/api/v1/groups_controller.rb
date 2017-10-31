@@ -34,6 +34,21 @@ module Api::V1
       render json: { contacts: user.contacts, groups: user.contact_groups, status: 200 }
     end
 
+    def edit_group
+      group = Group.find(params[:group][:id])
+      members = params[:group][:members]
+      name = params[:group][:name]
+      contacts = members.map do |member|
+        contact = Group.find_by(id: member, group_owner: user.id)
+      end
+
+      group.update(name: name, members: [])
+      contacts.each { |contact| group.members << contact.id }
+      group.save
+
+      render json: { contacts: user.contacts, groups: user.contact_groups, status: 200 }
+    end
+
     private
 
     def user

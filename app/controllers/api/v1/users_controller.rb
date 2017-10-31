@@ -75,6 +75,12 @@ module Api::V1
       end
     end
 
+    def activity
+      activity = ratings.concat(saved_curations)
+      sorted = activity.sort_by! { |a| a[:date] }.reverse
+      render json: { data: sorted, status: 200 }
+    end
+
     private
 
     def found_user
@@ -106,6 +112,41 @@ module Api::V1
           group.members.delete contact_id
           group.save
         end
+      end
+    end
+
+    def ratings
+      ratings = Curation.where(curator_id: user.id).where.not(rating: nil).limit(10)
+      ratings.map do |rating|
+        link = Link.find(rating.link_id)
+        friend = User.find(rating.user_id)
+        {
+          id: rating.id,
+          date: rating.updated_at,
+          rating: rating.rating,
+          title: link.title,
+          url: link.url,
+          type: 'rating',
+          friend: friend.name
+        }
+      end
+    end
+
+    def saved_curations
+      links = Link.where(link_owner: user.id).limit(10)
+      links.map do |link|
+        friends = link.curations.map do |curation|
+          user = User.find(curation.user_id)
+          user.name if user.name
+        end
+        {
+          id: link.id,
+          date: link.updated_at,
+          title: link.title,
+          url: link.url,
+          type: 'curation',
+          friends: friends
+        }
       end
     end
 

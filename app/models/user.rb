@@ -114,7 +114,8 @@ class User < ApplicationRecord
   def get_members(group)
     group.members.map do |member_id|
       member = Group.find(member_id)
-      { name: member.name, id: member.user_id }
+      user = User.find(member.user_id)
+      { name: member.name, id: member.user_id, group_id: member.id }
     end
   end
 
