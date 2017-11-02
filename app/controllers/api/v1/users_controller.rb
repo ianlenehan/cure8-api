@@ -124,8 +124,8 @@ module Api::V1
           id: rating.id,
           date: rating.updated_at,
           rating: rating.rating,
-          title: link.title,
-          url: link.url,
+          title: link.title || '',
+          url: link.url || '',
           type: 'rating',
           friend: friend.name
         }
@@ -133,7 +133,7 @@ module Api::V1
     end
 
     def saved_curations
-      links = Link.where(link_owner: user.id).order('created_at desc').limit(10)
+      links = Link.where(link_owner: 1).order('created_at desc').limit(10)
       links.map do |link|
         friends = link.curations.map do |curation|
           user = User.find(curation.user_id)
@@ -142,8 +142,8 @@ module Api::V1
         {
           id: link.id,
           date: link.updated_at,
-          title: link.title,
-          url: link.url,
+          title: link.title || '',
+          url: link.url || '',
           type: 'curation',
           friends: friends
         }
