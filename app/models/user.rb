@@ -5,7 +5,15 @@ class User < ApplicationRecord
   has_many :tokens, dependent: :destroy
 
   def name
-    self.first_name + ' ' + self.last_name
+    first_name + ' ' + last_name
+  end
+
+  def first_name
+    self.first_name || ''
+  end
+
+  def last_name
+    self.last_name || ''
   end
 
   def authenticate(code)

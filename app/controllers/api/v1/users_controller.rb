@@ -137,7 +137,7 @@ module Api::V1
       links.map do |link|
         friends = link.curations.map do |curation|
           user = User.find(curation.user_id)
-          user.name if user.name
+          user.name.blank? ? user.phone : user.name
         end
         {
           id: link.id,
