@@ -78,6 +78,18 @@ module Api::V1
     def activity
       activity = ratings.concat(saved_curations)
       sorted = activity.sort_by! { |a| a[:date] }.reverse
+      if sorted.empty?
+        sorted = [
+          {
+            id: 1,
+            date: Date.current,
+            title: "You have no activity yet!",
+            url: 'http://cure8.io',
+            type: 'curation',
+            friends: [user.name]
+          }
+        ]
+      end
       render json: { data: sorted, status: 200 }
     end
 
