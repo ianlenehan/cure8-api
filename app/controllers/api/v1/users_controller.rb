@@ -133,7 +133,7 @@ module Api::V1
     end
 
     def saved_curations
-      links = Link.where(link_owner: 1).order('created_at desc').limit(10)
+      links = Link.where(link_owner: user.id).order('created_at desc').limit(10)
       links.map do |link|
         friends = link.curations.map do |curation|
           user = User.find(curation.user_id)
