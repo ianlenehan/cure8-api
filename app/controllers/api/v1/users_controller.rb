@@ -128,7 +128,7 @@ module Api::V1
     end
 
     def ratings
-      ratings = Curation.where(curator_id: user.id).order('updated_at desc').where.not(rating: nil).limit(10)
+      ratings = Curation.where(curator_id: user.id).order('updated_at desc').where.not(rating: nil).limit(15)
       ratings.map do |rating|
         link = Link.find(rating.link_id)
         friend = User.find(rating.user_id)
@@ -145,7 +145,7 @@ module Api::V1
     end
 
     def saved_curations
-      links = Link.where(link_owner: user.id).order('created_at desc').limit(10)
+      links = Link.where(link_owner: user.id).order('created_at desc').limit(15)
       links.map do |link|
         friends = link.curations.map do |curation|
           user = User.find(curation.user_id)

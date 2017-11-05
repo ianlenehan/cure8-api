@@ -8,7 +8,9 @@ class PushNotificationService
       'app_id' => onesignal[:app_id],
       'include_player_ids' => [user_token],
       'contents' => { 'en': details[:title] },
-      'headings' => { 'en': get_heading(details) }
+      'headings' => { 'en': get_heading(details) },
+      'ios_badgeType' => 'Increase',
+      'ios_badgeCount' => 1
     }
 
     response = @http_client.post(post_url,
