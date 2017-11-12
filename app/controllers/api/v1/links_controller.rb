@@ -50,6 +50,7 @@ module Api::V1
         rating = params[:curation][:rating]
         action = params[:curation][:action]
 
+        add_tags(curation) if params[:curation][:tags]
         notify_curator = notify(curation)
 
         if curation.update(status: action, rating: rating)
@@ -199,6 +200,14 @@ module Api::V1
       image = page.images.best
       link.update(title: title, image: image)
       link
+    end
+
+    def add_tags(curation)
+      tags = params[:curation][:tags]
+      tags.each do |tag|
+        tagRecord = Tag.find_or_create_by(name: tag)
+        curation.tags << tagRecord unless curation.tags.include?(tagRecord)
+      end
     end
 
     def twilio

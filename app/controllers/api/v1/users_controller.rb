@@ -59,6 +59,7 @@ module Api::V1
         name: user.name,
         phone: user.phone,
         notifications: notifications,
+        tags: user.tags,
         status: 200
       }
     end
@@ -86,7 +87,7 @@ module Api::V1
             title: "You have no activity yet!",
             url: 'http://cure8.io',
             type: 'curation',
-            friends: [user.name]
+            friends: ['Cure8']
           }
         ]
       end

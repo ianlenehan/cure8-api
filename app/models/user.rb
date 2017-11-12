@@ -2,6 +2,7 @@ class User < ApplicationRecord
   validates :phone, presence: true
   has_many :curations
   has_many :links, through: :curations
+  has_many :tags, through: :curations
   has_many :tokens, dependent: :destroy
 
   def name
@@ -41,6 +42,7 @@ class User < ApplicationRecord
         image: link.image,
         comment: curation.comment,
         shared_with: people_shared_with(link, owner),
+        tags: curation.tags,
         owner: {
           name: owner.name,
           phone: owner.phone,
@@ -53,6 +55,13 @@ class User < ApplicationRecord
 
   def groups
     Group.where(group_owner: self.id)
+  end
+
+  def tags
+    tags = self.curations.map do |curation|
+      curation.tags.map { |tag| tag.name }
+    end
+    tags.flatten.uniq
   end
 
   def contacts

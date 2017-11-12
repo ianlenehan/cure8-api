@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171028010524) do
+ActiveRecord::Schema.define(version: 20171105100637) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -24,6 +24,11 @@ ActiveRecord::Schema.define(version: 20171028010524) do
     t.datetime "updated_at",                 null: false
     t.text     "comment"
     t.integer  "curator_id"
+  end
+
+  create_table "curations_tags", id: false, force: :cascade do |t|
+    t.integer "curation_id"
+    t.integer "tag_id"
   end
 
   create_table "groups", force: :cascade do |t|
