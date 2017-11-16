@@ -62,6 +62,19 @@ module Api::V1
       end
     end
 
+    def update_tags
+      if valid_token
+        curation = Curation.find(params[:curation][:id])
+        user = User.find(curation.user_id)
+
+        if params[:curation][:tags] && add_tags(curation)
+          render json: { links: user.links, status: 200 }
+        end
+      else
+        render json: { status: 401 }
+      end
+    end
+
     private
 
     def user

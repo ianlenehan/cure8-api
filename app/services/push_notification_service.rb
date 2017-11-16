@@ -32,6 +32,8 @@ class PushNotificationService
       "#{details[:reaction]} from #{details[:from]}"
     elsif (details[:type] == 'curation')
       "New curation from #{details[:from]}"
+    else
+      details[:type]
     end
   end
 

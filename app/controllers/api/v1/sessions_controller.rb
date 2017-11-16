@@ -47,14 +47,31 @@ module Api::V1
       db_token.destroy
     end
 
+    def notify_ian(first_name, last_name)
+      details = {
+        from: 'Cure8',
+        title: "New user",
+        type: "#{first_name} #{last_name}"
+      }
+      ian = User.first
+      ian.push_tokens.each do |push_token|
+        push_notification.publish(push_token.token, details)
+      end
+    end
+
     def find_and_update_user
       user = User.find_by :phone => params[:user][:phone]
       if !user.first_name
         first_name = params[:user][:first_name]
         last_name = params[:user][:last_name]
+        notify_ian(first_name, last_name)
         user.update(first_name: first_name.strip, last_name: last_name.strip)
       end
       user
+    end
+
+    def push_notification
+      @push_notification ||= PushNotificationService.new
     end
   end
 end
