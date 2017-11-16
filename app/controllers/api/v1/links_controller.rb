@@ -67,7 +67,7 @@ module Api::V1
         curation = Curation.find(params[:curation][:id])
         user = User.find(curation.user_id)
 
-        if params[:curation][:tags] && add_tags(curation)
+        if update_curation_tags(curation)
           render json: { links: user.links, status: 200 }
         end
       else
@@ -217,6 +217,15 @@ module Api::V1
 
     def add_tags(curation)
       tags = params[:curation][:tags]
+      tags.each do |tag|
+        tagRecord = Tag.find_or_create_by(name: tag)
+        curation.tags << tagRecord unless curation.tags.include?(tagRecord)
+      end
+    end
+
+    def update_curation_tags(curation)
+      tags = params[:curation][:tags]
+      curation.tags.clear
       tags.each do |tag|
         tagRecord = Tag.find_or_create_by(name: tag)
         curation.tags << tagRecord unless curation.tags.include?(tagRecord)
