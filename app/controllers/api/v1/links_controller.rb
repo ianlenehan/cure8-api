@@ -8,7 +8,13 @@ module Api::V1
         comment = params[:link][:comment]
         link = find_or_create_link(user, params[:link])
 
-        create_curations(contacts, comment, link)
+        if contacts[0].class == String
+          contact = User.find_or_create_by(phone: contacts[0])
+          create_anon_curation(contact.id, comment, link)
+        else
+          create_curations(contacts, comment, link)
+        end
+
         if params[:link][:save_to_my_links]
           Curation.create(user_id: user.id, link_id: link.id, comment: comment)
         end
@@ -122,6 +128,18 @@ module Api::V1
           end
         end
       end
+    end
+
+    def create_anon_curation(user_id, comment, link)
+      recipient = User.find(user_id)
+      new_link_notification(recipient, link)
+      Curation.create(
+        user_id: user_id,
+        curator_id: user.id,
+        link_id: link.id,
+        comment: comment
+      )
+      send_sms(user_id, link.id)
     end
 
     def send_sms(recipient_id, link_id)
