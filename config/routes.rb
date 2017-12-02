@@ -17,6 +17,7 @@ Rails.application.routes.draw do
       post 'links/bookmarklet' => 'links#create_link_from_web'
       post 'links/fetch' => 'links#get_links'
       post 'links/archive' => 'links#archive'
+      post 'links/update_tags' => 'links#update_tags'
       post 'contacts/create' => 'groups#create_contact'
       post 'groups/create' => 'groups#create_group'
       post 'groups/update' => 'groups#edit_group'
