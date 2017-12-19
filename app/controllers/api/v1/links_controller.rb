@@ -42,7 +42,7 @@ module Api::V1
         if user.links.any?
           render json: { links: user.links, status: 200 }
         else
-          render json: { status: 204 }
+          render json: { links: random_link, status: 200 }
         end
       else
         render json: { status: 401 }
@@ -241,6 +241,30 @@ module Api::V1
         tagRecord = Tag.find_or_create_by(name: tag)
         curation.tags << tagRecord unless curation.tags.include?(tagRecord)
       end
+    end
+
+    def random_link
+      curation = Tag.find_by(name: 'funny').curations.last
+      link = Link.find(curation.link_id)
+      link_for_app = {
+        curation_id: curation.id,
+        link_id: link.id,
+        status: 'new',
+        rating: nil,
+        date_added: Date.today,
+        url: link.url,
+        url_type: link.url_type,
+        title: link.title,
+        image: link.image,
+        comment: 'We thought we\'d add a link here for you to give you an idea of how this works. This will disappear when you add your own links. Enjoy!',
+        shared_with: 1,
+        tags: ['funny'],
+        owner: {
+          name: 'Cure8',
+          phone: '',
+        }
+      }
+      [link_for_app]
     end
 
     def twilio
