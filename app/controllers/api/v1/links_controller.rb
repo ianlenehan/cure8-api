@@ -215,7 +215,10 @@ module Api::V1
     end
 
     def format_url(link)
-      'http' + link.split('http').last
+      if link.include?('http')
+        'http' + link.split('http').last
+      else
+        link
     end
 
     def get_link_data(link)
