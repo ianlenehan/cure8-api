@@ -219,6 +219,7 @@ module Api::V1
         'http' + link.split('http').last
       else
         link
+      end
     end
 
     def get_link_data(link)
