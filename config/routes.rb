@@ -1,6 +1,5 @@
 Rails.application.routes.draw do
-
-  namespace :api, defaults:{ format: :json } do
+  namespace :api, defaults: { format: :json } do
     namespace :v1 do
       post 'login' => 'sessions#create'
       post 'logout' => 'sessions#destroy'
@@ -15,6 +14,7 @@ Rails.application.routes.draw do
 
       post 'links/create' => 'links#create_link'
       post 'links/bookmarklet' => 'links#create_link_from_web'
+      post 'links/share_extension' => 'links#create_link_from_extension'
       post 'links/fetch' => 'links#get_links'
       post 'links/archive' => 'links#archive'
       post 'links/update_tags' => 'links#update_tags'
@@ -23,5 +23,4 @@ Rails.application.routes.draw do
       post 'groups/update' => 'groups#edit_group'
     end
   end
-
 end

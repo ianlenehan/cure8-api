@@ -37,6 +37,13 @@ module Api::V1
       end
     end
 
+    def create_link_from_extension
+      phone = params[:phone]
+      url = params[:url]
+
+      render json: { phone: phone, url: url }
+    end
+
     def get_links
       if valid_token
         if user.links.any?
