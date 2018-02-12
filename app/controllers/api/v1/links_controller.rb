@@ -38,10 +38,10 @@ module Api::V1
     end
 
     def create_link_from_extension
-      phone = params[:phone]
+      token = params[:token]
       url = params[:url]
 
-      render json: { phone: phone, url: url }
+      render json: { token: token, url: url }
     end
 
     def get_links
