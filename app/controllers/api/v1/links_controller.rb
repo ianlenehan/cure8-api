@@ -42,7 +42,7 @@ module Api::V1
       url = params[:url]
 
       if user = Token.find_by(token: token).user
-        link = find_or_create_link(user, url)
+        link = find_or_create_link(user, params)
         Curation.create(user_id: user.id, link_id: link.id, comment: comment)
       end
 
