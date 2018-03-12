@@ -22,5 +22,14 @@ Rails.application.routes.draw do
       post 'groups/create' => 'groups#create_group'
       post 'groups/update' => 'groups#edit_group'
     end
+
+    namespace :v2 do
+      post 'links/create' => 'links#create_link'
+      post 'links/bookmarklet' => 'links#create_link_from_web'
+      post 'links/share_extension' => 'links#create_link_from_extension'
+      post 'links/fetch' => 'links#get_links'
+      post 'links/archive' => 'links#archive'
+      post 'links/update_tags' => 'links#update_tags'
+    end
   end
 end

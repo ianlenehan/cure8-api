@@ -22,6 +22,7 @@ class User < ApplicationRecord
     token
   end
 
+  # TODO this is only used for v1 of links api
   def links
     curations = self.curations.select do |curation|
       curation.rating != '0' and curation.status != 'deleted'
@@ -112,6 +113,7 @@ class User < ApplicationRecord
 
   private
 
+  # TODO this is only used for v1 of links api
   def people_shared_with(link, owner)
     curations = Curation.where(link_id: link.id)
     shared_with = curations.select { |curation| curation.user_id != owner.id }
@@ -125,7 +127,6 @@ class User < ApplicationRecord
   def get_members(group)
     group.members.map do |member_id|
       member = Group.find(member_id)
-      user = User.find(member.user_id)
       { name: member.name, id: member.user_id, group_id: member.id }
     end
   end
