@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171105100637) do
+ActiveRecord::Schema.define(version: 20180331011455) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -99,6 +99,7 @@ ActiveRecord::Schema.define(version: 20171105100637) do
     t.boolean  "notifications_new_rating", default: true
     t.string   "tokens_old",               default: [],                 array: true
     t.boolean  "show_tour",                default: false
+    t.date     "last_login"
   end
 
 end

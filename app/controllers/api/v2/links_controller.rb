@@ -47,6 +47,7 @@ module Api::V2
 
     def get_links
       if valid_token
+        register_user_activity
         if user_curations.any?
           render json: user_curations, each_serializer: ::UserLinksSerializer
         else
@@ -302,6 +303,10 @@ module Api::V2
 
     def push_notification
       @push_notification ||= PushNotificationService.new
+    end
+
+    def register_user_activity
+      user.update(last_login: Date.today)
     end
   end
 end
