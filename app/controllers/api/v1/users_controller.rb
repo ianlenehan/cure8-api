@@ -60,6 +60,7 @@ module Api::V1
         phone: user.phone,
         notifications: notifications,
         tags: user.tags,
+        subscription_type: user.subscription_type,
         status: 200
       }
     end
