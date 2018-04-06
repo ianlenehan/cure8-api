@@ -113,7 +113,7 @@ module Api::V2
       curations = user.curations.select do |curation|
         curation.rating != '0' && curation.status != 'deleted'
       end
-      if limit
+      if free_user_limit
         return curations.first(free_user_limit)
       end
       curations
