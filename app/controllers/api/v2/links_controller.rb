@@ -109,7 +109,7 @@ module Api::V2
       @link ||= Link.find(curation.link_id)
     end
 
-    def user_curations(limit)
+    def user_curations(limit = nil)
       curations = user.curations.select do |curation|
         curation.rating != '0' && curation.status != 'deleted'
       end
@@ -314,11 +314,12 @@ module Api::V2
     end
 
     def free_user_limit
-      limit = nil
       if !user.subscription_type
-        limit = 5
+        return 5
+      else
+        return nil
       end
-      limit
     end
+
   end
 end
