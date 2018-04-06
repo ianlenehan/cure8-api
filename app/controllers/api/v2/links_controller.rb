@@ -18,7 +18,7 @@ module Api::V2
           Curation.create(user_id: user.id, link_id: link.id, comment: comment)
         end
 
-        render json: user_curations, each_serializer: ::UserLinksSerializer
+        render json: user_curations(free_user_limit), each_serializer: ::UserLinksSerializer
       else
         render status: 401
       end
@@ -30,7 +30,7 @@ module Api::V2
         link = find_or_create_link(user, params[:link])
         Curation.create(user_id: user.id, link_id: link.id, comment: comment)
 
-        render json: user_curations, each_serializer: ::UserLinksSerializer
+        render json: user_curations(free_user_limit), each_serializer: ::UserLinksSerializer
       else
         render status: 401
       end
@@ -49,7 +49,7 @@ module Api::V2
       if valid_token
         register_user_activity
         if user_curations.any?
-          render json: user_curations, each_serializer: ::UserLinksSerializer
+          render json: user_curations(free_user_limit), each_serializer: ::UserLinksSerializer
         else
           render json: random_link
         end
@@ -70,7 +70,7 @@ module Api::V2
 
         if curation.update(status: action, rating: rating)
           rating_notification(curation, rating) if notify_curator
-          render json: user_curations, each_serializer: ::UserLinksSerializer
+          render json: user_curations(free_user_limit), each_serializer: ::UserLinksSerializer
         end
       else
         render status: 401
@@ -83,7 +83,7 @@ module Api::V2
         user = User.find(curation.user_id)
 
         if update_curation_tags(curation)
-          render json: user_curations, each_serializer: ::UserLinksSerializer
+          render json: user_curations(free_user_limit), each_serializer: ::UserLinksSerializer
         end
       else
         render status: 401
@@ -109,10 +109,14 @@ module Api::V2
       @link ||= Link.find(curation.link_id)
     end
 
-    def user_curations
-      user.curations.select do |curation|
+    def user_curations(limit)
+      curations = user.curations.select do |curation|
         curation.rating != '0' && curation.status != 'deleted'
       end
+      if limit
+        return curations.limit(limit)
+      end
+      curations
     end
 
     def valid_token
@@ -307,6 +311,14 @@ module Api::V2
 
     def register_user_activity
       user.update(last_login: Date.today)
+    end
+
+    def free_user_limit
+      limit = nil
+      if !user.subscription_type
+        limit = 5
+      end
+      limit
     end
   end
 end
