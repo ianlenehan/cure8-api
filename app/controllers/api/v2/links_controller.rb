@@ -113,10 +113,11 @@ module Api::V2
       curations = user.curations.select do |curation|
         curation.rating != '0' && curation.status != 'deleted'
       end
+      res = curations
       if free_user_limit
-        return curations.first(free_user_limit)
+        res = curations.last(free_user_limit)
       end
-      curations
+      res
     end
 
     def valid_token
