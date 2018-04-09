@@ -202,13 +202,12 @@ module Api::V2
 
     def rating_notification(curation, rating)
       if curator.notifications_new_rating && curator.push_tokens.length
-        reaction = rating == 1 ? "Thumbs up" : "Thumbs down"
         link = Link.find(curation.link_id)
         details = {
           from: user.name,
           title: link.title,
           type: 'rating',
-          reaction: reaction
+          reaction: reactions(value)
         }
         send_notification(curator, details)
       end
@@ -320,6 +319,18 @@ module Api::V2
       else
         return nil
       end
+    end
+
+    def reactions(value)
+      ratingValues = {
+        1 => 'Thumbs up',
+        2 => 'Love this',
+        3 => 'Haha!',
+        4 => 'Sad',
+        5 => 'Grr!!',
+        0 => 'Thumbs down',
+      }
+      ratingValues[value]
     end
 
   end
