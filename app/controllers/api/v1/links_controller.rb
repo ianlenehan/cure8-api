@@ -199,7 +199,7 @@ module Api::V1
           from: user.name,
           title: link.title,
           type: 'rating',
-          reaction: reactions(value)
+          reaction: reactions(rating)
         }
         send_notification(curator, details)
       end
