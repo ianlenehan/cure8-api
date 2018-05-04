@@ -31,9 +31,21 @@ module Api::V1
         link = find_or_create_link(user, params[:link])
         Curation.create(user_id: user.id, link_id: link.id, comment: comment)
 
-        render json: { links: user.links, status: 200 }
+        render plain: "OK"
       else
-        render json: { status: 401 }
+        render status: 401
+      end
+    end
+
+    def create_link_from_safari
+      if user_from_phone
+        comment = 'Saved from the web'
+        link = find_or_create_link(user_from_phone, params[:link])
+        Curation.create(user_id: user_from_phone.id, link_id: link.id, comment: comment)
+
+        render plain: "OK"
+      else
+        render status: 404
       end
     end
 
@@ -311,6 +323,11 @@ module Api::V1
         0 => 'Thumbs down',
       }
       ratingValues[value]
+    end
+
+    def user_from_phone
+      phone = params[:user][:phone]
+      User.find_by(phone: phone)
     end
   end
 end
