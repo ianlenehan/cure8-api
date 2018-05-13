@@ -159,7 +159,12 @@ module Api::V1
               user_group = Group.find(member_id)
               recipient = User.find(user_group.user_id)
               new_link_notification(recipient, link)
-              Curation.create(user_id: user_group.user_id, link_id: link.id, comment: comment)
+              Curation.create(
+                user_id: user_group.user_id,
+                curator_id: user.id,
+                link_id: link.id,
+                comment: comment,
+              )
               send_sms(user_group.user_id, link.id)
             end
           end
