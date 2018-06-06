@@ -26,7 +26,6 @@ module Api::V1
     end
 
     def create_link_from_web
-      puts "@@ian links from web"
       if valid_token
         comment = 'Saved via bookmarklet'
         link = find_or_create_link(user, params[:link])
@@ -39,24 +38,21 @@ module Api::V1
     end
 
     def create_link_from_safari
-      puts "@@ian links from safari"
       if user_from_phone
-        puts "@@ian links from safari phone"
         link = find_or_create_link(user_from_phone, params[:link])
         Curation.create(
           user_id: user_from_phone.id,
           link_id: link.id,
-          comment: 'Saved with bookmarklet',
+          comment: 'Saved via bookmarklet',
           curator_id: user_from_phone.id
         )
         render plain: 'OK'
       elsif user_from_code
-        puts "@@ian links from safari code"
         link = find_or_create_link(user_from_code, params[:link])
         Curation.create(
           user_id: user_from_code.id,
           link_id: link.id,
-          comment: 'Saved from bookmarklet',
+          comment: 'Saved via bookmarklet',
           curator_id: user_from_code.id
         )
         render plain: 'OK'
