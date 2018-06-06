@@ -27,7 +27,7 @@ module Api::V1
 
     def create_link_from_web
       if valid_token
-        comment = 'Saved from the web'
+        comment = 'Saved via bookmarklet'
         link = find_or_create_link(user, params[:link])
         Curation.create(user_id: user.id, link_id: link.id, comment: comment)
 
@@ -38,12 +38,17 @@ module Api::V1
     end
 
     def create_link_from_safari
+      comment = 'Saved via bookmarklet'
       if user_from_phone
-        comment = 'Saved from the web'
         link = find_or_create_link(user_from_phone, params[:link])
         Curation.create(user_id: user_from_phone.id, link_id: link.id, comment: comment)
 
-        render plain: "OK"
+        render plain: 'OK'
+      elsif user_from_code
+        link = find_or_create_link(user_from_code, params[:link])
+        Curation.create(user_id: user_from_code.id, link_id: link.id, comment: comment)
+
+        render plain: 'OK'
       else
         render status: 404
       end
@@ -109,6 +114,11 @@ module Api::V1
 
     def user
       @user ||= db_token.user
+    end
+
+    def user_from_code
+      user_id = params[:user][:code].split('-').last.to_i
+      @user_from_code || User.find(user_id)
     end
 
     def db_token

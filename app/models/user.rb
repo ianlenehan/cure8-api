@@ -111,6 +111,11 @@ class User < ApplicationRecord
     self.tokens.where(token_type: 'auth')
   end
 
+  def bookmarklet_code
+    phone_code = phone.slice(-4..-1)
+    "#{phone_code}-#{id}"
+  end
+
   private
 
   # TODO this is only used for v1 of links api

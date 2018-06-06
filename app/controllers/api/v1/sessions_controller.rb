@@ -40,7 +40,13 @@ module Api::V1
     end
 
     def safe_user(user)
-      { id: user.id, name: user.name, phone: user.phone, shares: user.shares }
+      {
+        id: user.id,
+        name: user.name,
+        phone: user.phone,
+        shares: user.shares,
+        bookmarklet_code: user.bookmarklet_code
+      }
     end
 
     def destroy_access_token
