@@ -1,25 +1,25 @@
 module Api::V1
   class UsersController < ApplicationController
     def request_one_time_password
-      # phone = params[:user][:phone]
-      # found_user.update(code: '1234', code_valid: true)
+      phone = params[:user][:phone]
+      found_user.update(code: '1234', code_valid: true)
       message = does_user_have_account
-      status = 200
-      @client = Twilio::REST::Client.new twilio[:account_sid], twilio[:auth_token]
-
-      begin
-        @client.api.account.messages.create(
-          from: twilio_phone,
-          to: params[:user][:phone],
-          body: "Your Cure8 one time password is #{one_time_password}.",
-        )
-      rescue Twilio::REST::TwilioError => error
-        puts error.message
-      end
-      if error
-        message = error.message
-        status = error.status_code
-      end
+      # status = 200
+      # @client = Twilio::REST::Client.new twilio[:account_sid], twilio[:auth_token]
+      #
+      # begin
+      #   @client.api.account.messages.create(
+      #     from: twilio_phone,
+      #     to: params[:user][:phone],
+      #     body: "Your Cure8 one time password is #{one_time_password}.",
+      #   )
+      # rescue Twilio::REST::TwilioError => error
+      #   puts error.message
+      # end
+      # if error
+      #   message = error.message
+      #   status = error.status_code
+      # end
       render json: { message: message, status: status }
     end
 

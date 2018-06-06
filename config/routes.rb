@@ -13,8 +13,8 @@ Rails.application.routes.draw do
       get 'verify' => 'sessions#verify_access_token'
 
       post 'links/create' => 'links#create_link'
-      post 'links/bookmarklet' => 'links#create_link_from_web'
       post 'links/bookmarklet/safari' => 'links#create_link_from_safari'
+      post 'links/bookmarklet' => 'links#create_link_from_web'
       post 'links/share_extension' => 'links#create_link_from_extension'
       post 'links/fetch' => 'links#get_links'
       post 'links/archive' => 'links#archive'
