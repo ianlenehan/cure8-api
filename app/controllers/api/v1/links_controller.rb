@@ -38,16 +38,23 @@ module Api::V1
     end
 
     def create_link_from_safari
-      comment = 'Saved via bookmarklet'
       if user_from_phone
         link = find_or_create_link(user_from_phone, params[:link])
-        Curation.create(user_id: user_from_phone.id, link_id: link.id, comment: comment)
-
+        Curation.create(
+          user_id: user_from_phone.id,
+          link_id: link.id,
+          comment: 'Saved with bookmarklet',
+          curator_id: user_from_phone.id
+        )
         render plain: 'OK'
       elsif user_from_code
         link = find_or_create_link(user_from_code, params[:link])
-        Curation.create(user_id: user_from_code.id, link_id: link.id, comment: comment)
-
+        Curation.create(
+          user_id: user_from_code.id,
+          link_id: link.id,
+          comment: 'Saved via bookmarklet',
+          curator_id: user_from_code.id
+        )
         render plain: 'OK'
       else
         render status: 404
