@@ -31,29 +31,21 @@ module Api::V1
         link = find_or_create_link(user, params[:link])
         Curation.create(user_id: user.id, link_id: link.id, comment: comment)
 
-        render plain: "OK"
+        render plain: 'OK'
       else
         render status: 401
       end
     end
 
     def create_link_from_safari
-      if user_from_phone
-        link = find_or_create_link(user_from_phone, params[:link])
+      user_record = user_from_phone || user_from_code
+      if user_record
+        link = find_or_create_link(user_record, params[:link])
         Curation.create(
-          user_id: user_from_phone.id,
+          user_id: user_record.id,
           link_id: link.id,
           comment: 'Saved via bookmarklet',
-          curator_id: user_from_phone.id
-        )
-        render plain: 'OK'
-      elsif user_from_code
-        link = find_or_create_link(user_from_code, params[:link])
-        Curation.create(
-          user_id: user_from_code.id,
-          link_id: link.id,
-          comment: 'Saved via bookmarklet',
-          curator_id: user_from_code.id
+          curator_id: user_record.id
         )
         render plain: 'OK'
       else
@@ -156,37 +148,33 @@ module Api::V1
       not_rated && not_same_user
     end
 
-    # TODO refactor this method
     def create_curations(group_ids, comment, link)
       if group_ids
         group_ids.each do |group_id|
           group = Group.find(group_id)
           if group.user_id
-            recipient = User.find(group.user_id)
-            new_link_notification(recipient, link)
-            Curation.create(
-              user_id: group.user_id,
-              curator_id: user.id,
-              link_id: link.id,
-              comment: comment
-            )
-            send_sms(group.user_id, link.id)
+            create_for_group(group, comment, link)
           else
             group.members.each do |member_id|
               user_group = Group.find(member_id)
-              recipient = User.find(user_group.user_id)
-              new_link_notification(recipient, link)
-              Curation.create(
-                user_id: user_group.user_id,
-                curator_id: user.id,
-                link_id: link.id,
-                comment: comment,
-              )
-              send_sms(user_group.user_id, link.id)
+              create_for_group(user_group)
             end
           end
         end
       end
+    end
+
+    def create_for_group(group, comment, link)
+      group.touch
+      recipient = User.find(group.user_id)
+      new_link_notification(recipient, link)
+      Curation.create(
+        user_id: group.user_id,
+        curator_id: user.id,
+        link_id: link.id,
+        comment: comment
+      )
+      send_sms(group.user_id, link.id)
     end
 
     def create_anon_curation(user_id, comment, link)
