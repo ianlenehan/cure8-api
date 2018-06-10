@@ -6,7 +6,7 @@ module Api::V1
       message = does_user_have_account
       status = 200
       @client = Twilio::REST::Client.new twilio[:account_sid], twilio[:auth_token]
-      puts "got client @@irl #{twilio[:account_sid]}"
+
       begin
         @client.api.account.messages.create(
           from: twilio_phone,
