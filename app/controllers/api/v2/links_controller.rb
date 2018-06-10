@@ -144,7 +144,7 @@ module Api::V2
           else
             group.members.each do |member_id|
               user_group = Group.find(member_id)
-              create_for_group(user_group)
+              create_for_group(user_group, comment, link)
             end
           end
         end
