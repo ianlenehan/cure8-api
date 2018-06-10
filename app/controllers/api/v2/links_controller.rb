@@ -135,37 +135,33 @@ module Api::V2
       not_rated && not_same_user
     end
 
-    # TODO refactor this method
     def create_curations(group_ids, comment, link)
       if group_ids
         group_ids.each do |group_id|
           group = Group.find(group_id)
           if group.user_id
-            recipient = User.find(group.user_id)
-            new_link_notification(recipient, link)
-            Curation.create(
-              user_id: group.user_id,
-              curator_id: user.id,
-              link_id: link.id,
-              comment: comment
-            )
-            send_sms(group.user_id, link.id)
+            create_for_group(group, comment, link)
           else
             group.members.each do |member_id|
               user_group = Group.find(member_id)
-              recipient = User.find(user_group.user_id)
-              new_link_notification(recipient, link)
-              Curation.create(
-                user_id: user_group.user_id,
-                curator_id: user.id,
-                link_id: link.id,
-                comment: comment,
-              )
-              send_sms(user_group.user_id, link.id)
+              create_for_group(user_group)
             end
           end
         end
       end
+    end
+
+    def create_for_group(group, comment, link)
+      group.touch
+      recipient = User.find(group.user_id)
+      new_link_notification(recipient, link)
+      Curation.create(
+        user_id: group.user_id,
+        curator_id: user.id,
+        link_id: link.id,
+        comment: comment
+      )
+      send_sms(group.user_id, link.id)
     end
 
     def create_anon_curation(user_id, comment, link)
