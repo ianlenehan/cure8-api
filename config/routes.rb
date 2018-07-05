@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  resources :conversations, only: [:index, :create]
+  resources :messages, only: [:create]
+  mount ActionCable.server => '/cable'
+  
   namespace :api, defaults: { format: :json } do
     namespace :v1 do
       post 'login' => 'sessions#create'
