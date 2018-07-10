@@ -12,6 +12,12 @@ class User < ApplicationRecord
     first + ' ' + last
   end
 
+  def short_name
+    first = self.first_name || ''
+    last = self.last_name.first || ''
+    first + ' ' + last
+  end
+
   def authenticate(code)
     self.generate_access_token if self.code_valid && self.code == code
   end

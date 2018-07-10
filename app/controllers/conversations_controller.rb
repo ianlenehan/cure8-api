@@ -5,14 +5,21 @@ class ConversationsController < ApplicationController
   end
 
   def create
-    conversation = Conversation.new({ title: conversation_link.title })
-    if conversation.save
-      set_conversation_users(conversation)
-      serialized_data = ActiveModelSerializers::Adapter::Json.new(
-        ConversationSerializer.new(conversation)
-      ).serializable_hash
-      ActionCable.server.broadcast 'conversations_channel', serialized_data
-      head :ok
+    if existing_chat
+      head :found
+    else
+      conversation = Conversation.new({
+        title: conversation_link.title,
+        link_id: conversation_link.id
+        })
+        if conversation.save
+          set_conversation_users(conversation)
+          serialized_data = ActiveModelSerializers::Adapter::Json.new(
+            ConversationSerializer.new(conversation)
+          ).serializable_hash
+          ActionCable.server.broadcast 'conversations_channel', serialized_data
+          head :ok
+        end
     end
   end
 
@@ -40,6 +47,18 @@ class ConversationsController < ApplicationController
     end
     conversation.users << app_user
     conversation.save
+  end
+
+  def existing_chat
+    chats = Conversation.where(link_id: params[:conversation][:link_id])
+    link_chat_exists = chats.length > 0
+    user_chat = chats.select { |chat| chat.users.include?(app_user) }
+    if user_chat.length && link_chat_exists
+      existing_chat = user_chat.first
+    else
+      existing_chat = nil
+    end
+    existing_chat
   end
 
   def app_user

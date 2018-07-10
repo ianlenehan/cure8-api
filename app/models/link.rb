@@ -1,5 +1,6 @@
 class Link < ApplicationRecord
   has_many :users, through: :curations
+  has_many :conversations
 
   def curations
     Curation.where(link_id: self.id)
