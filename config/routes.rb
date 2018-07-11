@@ -1,7 +1,4 @@
 Rails.application.routes.draw do
-  resources :conversations, only: [:index, :create]
-  post 'user_conversations' => 'conversations#user_conversations'
-  resources :messages, only: [:create]
   mount ActionCable.server => '/cable'
 
   namespace :api, defaults: { format: :json } do
@@ -27,6 +24,10 @@ Rails.application.routes.draw do
       post 'contacts/create' => 'groups#create_contact'
       post 'groups/create' => 'groups#create_group'
       post 'groups/update' => 'groups#edit_group'
+
+      resources :conversations, only: [:index, :create]
+      post 'user_conversations' => 'conversations#user_conversations'
+      resources :messages, only: [:create]
     end
 
     namespace :v2 do
