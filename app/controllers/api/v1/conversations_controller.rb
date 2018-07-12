@@ -7,21 +7,22 @@ module Api::V1
 
     def create
       if existing_chat
-        head :found
+        conversation = existing_chat
       else
-        conversation = Conversation.new({
+        new_conversation = Conversation.new({
           title: conversation_link.title,
           link_id: conversation_link.id
           })
-          if conversation.save
-            set_conversation_users(conversation)
-            serialized_data = ActiveModelSerializers::Adapter::Json.new(
-              ConversationSerializer.new(conversation)
-            ).serializable_hash
-            ActionCable.server.broadcast 'conversations_channel', serialized_data
-            head :ok
-          end
+        if new_conversation.save
+          set_conversation_users(new_conversation)
+          serialized_data = ActiveModelSerializers::Adapter::Json.new(
+            ConversationSerializer.new(new_conversation)
+          ).serializable_hash
+          ActionCable.server.broadcast 'conversations_channel', serialized_data
+        end
+        conversation = new_conversation
       end
+      render json: conversation
     end
 
     def user_conversations
@@ -53,7 +54,8 @@ module Api::V1
     def existing_chat
       chats = Conversation.where(link_id: params[:conversation][:link_id])
       link_chat_exists = chats.length > 0
-      user_chat = chats.select { |chat| chat.users.include?(app_user) }
+      user_chat = chats.select { |chat| chats.first.users.exists?(app_user.id) }
+
       if user_chat.length && link_chat_exists
         existing_chat = user_chat.first
       else
