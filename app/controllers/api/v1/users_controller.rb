@@ -58,6 +58,7 @@ module Api::V1
         show_tour: user.show_tour
       }
       render json: {
+        id: user.id,
         stats: user.stats,
         name: user.name,
         phone: user.phone,

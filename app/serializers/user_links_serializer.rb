@@ -1,6 +1,7 @@
 class UserLinksSerializer < ActiveModel::Serializer
   attributes :curation_id, :link_id, :status, :rating, :date_added, :url,
-             :url_type, :title, :image, :comment, :shared_with, :tags, :owner
+             :url_type, :title, :image, :comment, :shared_with, :users_shared_with,
+             :tags, :owner
 
   def curation_id
     object.id
@@ -36,10 +37,17 @@ class UserLinksSerializer < ActiveModel::Serializer
     shared_with.length
   end
 
+  def users_shared_with
+    curations = Curation.where(link_id: link.id)
+    user_ids = curations.pluck(:user_id)
+    user_ids.push(link_owner.id).uniq
+  end
+
   def owner
     {
       name: link_owner.name,
-      phone: link_owner.phone
+      phone: link_owner.phone,
+      id: link_owner.id
     }
   end
 
