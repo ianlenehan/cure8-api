@@ -330,6 +330,7 @@ module Api::V1
         3 => 'Haha!',
         4 => 'Sad',
         5 => 'Grr!!',
+        6 => 'Wow',
         0 => 'Thumbs down',
       }
       ratingValues[value]
