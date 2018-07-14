@@ -4,7 +4,7 @@ class ConversationSerializer < ActiveModel::Serializer
 
   def members
     users = object.users.uniq
-    users.map { |user| user.short_name  }
+    users.map { |user| user.short_name }
   end
 
   def image_url
