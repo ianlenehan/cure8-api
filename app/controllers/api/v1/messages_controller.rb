@@ -5,8 +5,9 @@ module Api::V1
         text: message_params[:text],
         conversation_id: message_params[:conversation_id],
         user_id: app_user.id
-        })
+      })
       conversation = Conversation.find(message_params[:conversation_id])
+      conversation.touch
       if message.save
         serialized_data = ActiveModelSerializers::Adapter::Json.new(
           MessageSerializer.new(message)
