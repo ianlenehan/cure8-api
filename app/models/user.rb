@@ -4,6 +4,7 @@ class User < ApplicationRecord
   has_many :links, through: :curations
   has_many :tags, through: :curations
   has_many :tokens, dependent: :destroy
+  has_many :user_notifications, dependent: :destroy
   has_and_belongs_to_many :conversations
 
   def name

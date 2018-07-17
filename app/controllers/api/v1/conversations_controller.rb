@@ -26,7 +26,7 @@ module Api::V1
     end
 
     def user_conversations
-      render json: app_user.conversations.uniq
+      render json: app_user.conversations.uniq, user: app_user
     end
 
     private

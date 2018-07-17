@@ -1,5 +1,5 @@
 class ConversationSerializer < ActiveModel::Serializer
-  attributes :id, :title, :members, :updated_at
+  attributes :id, :title, :members, :updated_at, :unread_messages
   has_many :messages
 
   def members
@@ -9,5 +9,16 @@ class ConversationSerializer < ActiveModel::Serializer
 
   def image_url
     # need to connect link to conversation. Then grab image url
+  end
+
+  def unread_messages
+    current_user = @instance_options[:user]
+
+    unread = UserNotification.find_by(
+      user_id: current_user.id,
+      category: 'conversation',
+      category_id: object.id
+    )
+    unread ? unread.count : 0
   end
 end

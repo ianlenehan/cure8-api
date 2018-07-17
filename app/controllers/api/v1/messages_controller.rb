@@ -28,11 +28,24 @@ module Api::V1
       }
       conversation.users.each do |recipient|
         not_current_user = recipient.id != app_user.id
+        update_notification_count(recipient, conversation)
         if recipient.notifications && not_current_user
           recipient.push_tokens.each do |push_token|
             push_notification.publish(push_token.token, details)
           end
         end
+      end
+    end
+
+    def update_notification_count(recipient, conversation)
+      if recipient.id != app_user.id
+        notification = UserNotification.find_or_create_by(
+          user_id: recipient[:id],
+          category: 'conversation',
+          category_id: conversation[:id],
+        )
+        notification.count += 1
+        notification.save
       end
     end
 
