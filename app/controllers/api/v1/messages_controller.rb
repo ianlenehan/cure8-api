@@ -27,7 +27,8 @@ module Api::V1
         type: 'chat'
       }
       conversation.users.each do |recipient|
-        if recipient.notifications
+        not_current_user = recipient.id != app_user.id
+        if recipient.notifications && not_current_user
           recipient.push_tokens.each do |push_token|
             push_notification.publish(push_token.token, details)
           end
