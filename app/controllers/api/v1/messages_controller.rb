@@ -9,7 +9,7 @@ module Api::V1
       conversation = Conversation.find(message_params[:conversation_id])
       conversation.touch
       if message.save
-        send_notification(conversation)
+        send_notifications(conversation)
         serialized_data = ActiveModelSerializers::Adapter::Json.new(
           MessageSerializer.new(message)
         ).serializable_hash
