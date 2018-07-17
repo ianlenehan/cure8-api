@@ -17,7 +17,7 @@ class MessageSerializer < ActiveModel::Serializer
 
   def unread_messages(conversation)
     unread = UserNotification.find_by(
-      user_id: object.user_id
+      user_id: object.user_id,
       category: 'conversation',
       category_id: conversation.id
     )
