@@ -38,9 +38,7 @@ module Api::V1
     end
 
     def update_notification_count(recipient, conversation)
-      puts "@@@@ rec id #{recipient.id} app user id #{app_user.id}"
       if recipient.id != app_user.id
-        puts "@@@ ok adding it"
         notification = UserNotification.find_or_create_by(
           user_id: recipient[:id],
           category: 'conversation',
