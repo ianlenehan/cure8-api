@@ -27,6 +27,7 @@ Rails.application.routes.draw do
 
       resources :conversations, only: [:index, :create]
       post 'user_conversations' => 'conversations#user_conversations'
+      post 'conversations/reset' => 'conversations#reset_unread_count'
       resources :messages, only: [:create]
     end
 

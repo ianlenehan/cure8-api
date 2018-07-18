@@ -29,6 +29,16 @@ module Api::V1
       render json: app_user.conversations.uniq, user: app_user
     end
 
+    def reset_unread_count
+      notification = UserNotification.find_or_create_by(
+        user_id: app_user[:id],
+        category: 'conversation',
+        category_id: params[:conversation][:id],
+      )
+      notification.update(count: 0)
+      user_conversations
+    end
+
     private
 
     def user_params

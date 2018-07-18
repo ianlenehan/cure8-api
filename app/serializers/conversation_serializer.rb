@@ -14,11 +14,15 @@ class ConversationSerializer < ActiveModel::Serializer
   def unread_messages
     current_user = @instance_options[:user]
 
-    unread = UserNotification.find_by(
-      user_id: current_user.id,
-      category: 'conversation',
-      category_id: object.id
-    )
-    unread ? unread.count : 0
+    if current_user
+      unread = UserNotification.find_by(
+        user_id: current_user.id,
+        category: 'conversation',
+        category_id: object.id
+      )
+      unread ? unread.count : 0
+    else
+      0
+    end
   end
 end
