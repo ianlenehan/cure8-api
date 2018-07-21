@@ -57,19 +57,23 @@ module Api::V1
       else
         conversation.users << conversation_link.owner
       end
-      conversation.users << app_user
+      conversation.users << app_user if conversation.users.exclude?(app_user)
       conversation.save
     end
 
     def existing_chat
       chats = Conversation.where(link_id: params[:conversation][:link_id])
+      chat_type = params[:conversation][:chat_type]
       link_chat_exists = chats.length > 0
-      user_chat = chats.select { |chat| chats.first.users.exists?(app_user.id) }
+      user_chats = chats.select { |chat| chats.first.users.exists?(app_user.id) }
+      existing_chat = nil
 
-      if user_chat.length && link_chat_exists
-        existing_chat = user_chat.first
-      else
-        existing_chat = nil
+      if user_chats.length && link_chat_exists
+        if chat_type == 'single'
+          existing_chat = user_chats.select { |chat| chat.users.length == 2 }.first
+        elsif chat_type == 'group'
+          existing_chat = user_chats.select { |chat| chat.users.length > 2 }.first
+        end
       end
       existing_chat
     end
