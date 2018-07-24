@@ -7,6 +7,7 @@ class ConversationSerializer < ActiveModel::Serializer
     users.map do |user|
       puts "@@@ who is user #{user.id}"
       user.short_name
+    end
   end
 
   def image_url
