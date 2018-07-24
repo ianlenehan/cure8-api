@@ -5,8 +5,7 @@ class ConversationSerializer < ActiveModel::Serializer
   def members
     users = object.users.uniq
     users.map do |user|
-      puts "@@@ who is user #{user.id}"
-      user.short_name
+      user.short_name if user.first_name
     end
   end
 
