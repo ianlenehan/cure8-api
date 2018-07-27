@@ -82,7 +82,8 @@ class User < ApplicationRecord
           phone: contact.phone,
           id: group.id,
           member: group.is_member?,
-          updated_at: group.updated_at
+          updated_at: group.updated_at,
+          user_id: group.user_id
         }
       end
     end

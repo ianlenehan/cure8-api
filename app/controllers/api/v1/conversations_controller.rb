@@ -79,12 +79,10 @@ module Api::V1
     end
 
     def app_user
-      puts "App user @@@ #{db_token} #{db_token.user}"
       db_token.user
     end
 
     def db_token
-      puts "User params @@@ #{user_params} #{params}"
       Token.find_by(token: user_params[:token])
     end
   end
