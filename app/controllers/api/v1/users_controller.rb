@@ -51,22 +51,7 @@ module Api::V1
     end
 
     def get_user_info
-      notifications = {
-        push: user.notifications,
-        curation: user.notifications_new_link,
-        rating: user.notifications_new_rating,
-        show_tour: user.show_tour
-      }
-      render json: {
-        id: user.id,
-        stats: user.stats,
-        name: user.name,
-        phone: user.phone,
-        notifications: notifications,
-        tags: user.tags,
-        subscription_type: user.subscription_type,
-        status: 200
-      }
+      render json: user_info_object
     end
 
     def update
@@ -78,6 +63,7 @@ module Api::V1
       else
         user.update_attribute(symbol, value)
       end
+      render json: user_info_object
     end
 
     def activity
@@ -110,6 +96,28 @@ module Api::V1
 
     def db_token
       @db_token ||= Token.find_by(token: params[:user][:token])
+    end
+
+    def user_notifications
+      {
+        push: user.notifications,
+        curation: user.notifications_new_link,
+        rating: user.notifications_new_rating,
+        show_tour: user.show_tour
+      }
+    end
+
+    def user_info_object
+      {
+        id: user.id,
+        stats: user.stats,
+        name: user.name,
+        phone: user.phone,
+        notifications: notifications,
+        tags: user.tags,
+        subscription_type: user.subscription_type,
+        status: 200
+      }
     end
 
     def one_time_password
