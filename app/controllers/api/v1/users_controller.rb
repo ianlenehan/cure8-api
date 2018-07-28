@@ -113,7 +113,7 @@ module Api::V1
         stats: user.stats,
         name: user.name,
         phone: user.phone,
-        notifications: notifications,
+        notifications: user_notifications,
         tags: user.tags,
         subscription_type: user.subscription_type,
         status: 200
