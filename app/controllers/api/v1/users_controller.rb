@@ -75,11 +75,10 @@ module Api::V1
       value = params[:user][:value]
       if field == 'push'
         add_push_token(value)
-        get_user_info
       else
         user.update_attribute(symbol, value)
-        get_user_info
       end
+      get_user_info
     end
 
     def activity
