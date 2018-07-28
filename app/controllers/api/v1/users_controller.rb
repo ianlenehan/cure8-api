@@ -78,7 +78,6 @@ module Api::V1
       else
         user.update_attribute(symbol, value)
       end
-      get_user_info
     end
 
     def activity
