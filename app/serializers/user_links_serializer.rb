@@ -40,7 +40,8 @@ class UserLinksSerializer < ActiveModel::Serializer
   def users_shared_with
     curations = Curation.where(link_id: link.id)
     user_ids = curations.pluck(:user_id)
-    user_ids.map { |id| User.find(id) }.uniq
+    user_ids_without_current_user = user_ids.reject { |id| id === link_owner.id }
+    user_ids_without_current_user.map { |id| User.find(id) }.uniq
   end
 
   def owner
