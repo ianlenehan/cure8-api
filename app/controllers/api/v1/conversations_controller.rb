@@ -65,7 +65,7 @@ module Api::V1
       chats = Conversation.where(link_id: params[:conversation][:link_id])
       chat_type = params[:conversation][:chat_type]
       link_chat_exists = chats.length > 0
-      user_chats = chats.select { |chat| chats.first.users.exists?(app_user.id) }
+      user_chats = chats.select { |chat| chat.users.exists?(app_user.id) }
       existing_chat = nil
 
       if user_chats.length && link_chat_exists
