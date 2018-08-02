@@ -243,8 +243,14 @@ module Api::V2
     end
 
     def get_link_data(link)
-      page = MetaInspector.new(link.url)
-      title = page.title
+      begin
+        page = MetaInspector.new(link.url)
+      rescue StandardError => e
+        page = nil
+        print "Meta Inspector Error: #{e}"
+      end
+
+      title = page ? page.title : link.url
       image = page.images.best
       link.update(title: title, image: image)
       link
