@@ -58,7 +58,7 @@ module Api::V1
         conversation.users << conversation_link.owner
       end
       conversation.users << app_user if conversation.users.exclude?(app_user)
-      conversation.users << conversation.owner if conversation.users.exclude?(conversation.owner)
+      conversation.users << conversation.link.owner if conversation.users.exclude?(conversation.link.owner)
       conversation.save
     end
 
