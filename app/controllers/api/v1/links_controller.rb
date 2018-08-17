@@ -258,6 +258,7 @@ module Api::V1
     def get_link_data(link)
       page = MetaInspector.new(link.url)
       title = page.title
+      title = link.url if page.title == 'Access Denied'
       image = page.images.best
       link.update(title: title, image: image)
       link
