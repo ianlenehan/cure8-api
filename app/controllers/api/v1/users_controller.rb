@@ -121,7 +121,7 @@ module Api::V1
     end
 
     def one_time_password
-      code = rand(100_000..999_999)
+      code = rand(1_000..9_999)
       found_user.update(code: code, code_valid: true)
       code
     end
