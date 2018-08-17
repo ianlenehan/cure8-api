@@ -251,6 +251,8 @@ module Api::V2
       end
 
       title = page ? page.title : link.url
+      if page.title == 'Access Denied'
+        title = link.url
       image = page.images.best
       link.update(title: title, image: image)
       link
