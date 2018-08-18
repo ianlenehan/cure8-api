@@ -35,8 +35,8 @@ module Api::V1
     def add_push_token(push_token)
       if push_token && !Token.where(token: push_token).exists?
         user.tokens.create(token: push_token, token_type: 'push')
+        render json: { status: 200 }
       end
-      render json: { status: 200 }
     end
 
     def get_contacts
@@ -82,6 +82,21 @@ module Api::V1
         ]
       end
       render json: { data: sorted, status: 200 }
+    end
+
+    def user_activity(user)
+      links = Link.where(link_owner: user.id).limit(5)
+      if links.length        
+        links.map do |link|
+          curations = Curation.where(link_id: link.id)
+          ratings = curations.map do |curation|
+            user = User.find(curation.user_id)
+            { user: user.name, rating: curation.rating }
+          end
+          { title: link.title, url: link.url, created_at: link.created_at, activity: ratings }
+        end
+        render json: activity
+      end
     end
 
     private

@@ -12,6 +12,7 @@ Rails.application.routes.draw do
       post 'user/token' => 'users#add_push_token'
       post 'user/update' => 'users#update'
       post 'user/activity' => 'users#activity'
+      post 'user/user_activity' => 'users#user_activity'
       get 'verify' => 'sessions#verify_access_token'
 
       post 'links/create' => 'links#create_link'
