@@ -84,19 +84,22 @@ module Api::V1
       render json: { data: sorted, status: 200 }
     end
 
-    def user_activity(user)
-      links = Link.where(link_owner: user.id).limit(5)
-      if links.length        
-        links.map do |link|
+    def user_activity
+      links = Link.where(link_owner: user.id).order('updated_at desc').limit(20)
+      activity = nil
+      if links.length
+        activity = links.map do |link|
           curations = Curation.where(link_id: link.id)
-          ratings = curations.map do |curation|
-            user = User.find(curation.user_id)
-            { user: user.name, rating: curation.rating }
+           ratings = curations.map do |curation|
+            recipient = User.find(curation.user_id)
+            if recipient.id != user.id
+              { user: recipient.name, rating: curation.rating }
+            end
           end
-          { title: link.title, url: link.url, created_at: link.created_at, activity: ratings }
+          { title: link.title, url: link.url, created_at: link.created_at, ratings: ratings.compact }
         end
-        render json: activity
       end
+      render json: activity
     end
 
     private
