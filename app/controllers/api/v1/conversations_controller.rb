@@ -25,6 +25,18 @@ module Api::V1
       render json: conversation
     end
 
+    def delete
+      if app_user
+        conversation = Conversation.find(params[:conversation][:id])
+        if params[:conversation][:should_delete]
+          conversation.destroy
+        else
+          conversation.users.delete(app_user)
+        end
+        render json: app_user.conversations.uniq, user: app_user
+      end
+    end
+
     def user_conversations
       render json: app_user.conversations.uniq, user: app_user
     end
