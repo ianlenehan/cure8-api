@@ -85,7 +85,7 @@ module Api::V1
     end
 
     def user_activity
-      links = Link.where(link_owner: user.id).order('updated_at desc').limit(20)
+      links = Link.where(link_owner: user.id).order('created_at desc').limit(20)
       activity = nil
       if links.length
         activity = links.map do |link|
