@@ -256,12 +256,19 @@ module Api::V1
     end
 
     def get_link_data(link)
-      page = MetaInspector.new(link.url)
-      title = page.title
-      if title == 'Access Denied'
-        title == link.url
+      page = nil
+      title = link.url
+      begin
+        page = MetaInspector.new(link.url)
+      rescue StandardError => e
+        print "Meta Inspector Error: #{e}"
       end
-      image = page.images.best
+
+      if page
+        title = page.title if page.title != 'Access Denied'
+        image = page.images.best
+      end
+
       link.update(title: title, image: image)
       link
     end
