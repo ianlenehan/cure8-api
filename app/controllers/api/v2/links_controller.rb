@@ -238,7 +238,7 @@ module Api::V2
       if link.include?('http')
         'http' + link.split('http').last
       else
-        link
+        'http://' + link
       end
     end
 
