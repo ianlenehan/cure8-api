@@ -5,18 +5,15 @@ module Api::V1
       phone = params[:contact][:phone]
       contact = find_or_create_contact(phone)
       name = params[:contact][:name]
-      if contact_already_exists(phone)
-        render json: { status: 403 }
-      else
+      if !contact_already_exists(phone)
         group = user.groups.create
         group.update(
         group_owner: user.id,
         name: name,
         user_id: contact.id
         )
-
-        render json: { contacts: user.contacts, groups: user.contact_groups, status: 200 }
       end
+      render json: { contacts: user.contacts, groups: user.contact_groups, status: 200 }
     end
 
     def create_group
