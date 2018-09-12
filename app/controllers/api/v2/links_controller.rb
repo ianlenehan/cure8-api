@@ -16,9 +16,10 @@ module Api::V2
 
         if params[:link][:save_to_my_links]
           Curation.create(user_id: user.id, link_id: link.id, comment: comment)
+          render json: user_curations, each_serializer: ::UserLinksSerializer
+        else
+          render status: 201
         end
-
-        render json: user_curations, each_serializer: ::UserLinksSerializer
       else
         render status: 401
       end
