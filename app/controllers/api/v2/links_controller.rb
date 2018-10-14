@@ -293,6 +293,7 @@ module Api::V2
         image: link.image,
         comment: 'We thought we\'d add a link here for you to give you an idea of how this works. This will disappear when you add your own links. Enjoy!',
         shared_with: 1,
+        users_shared_with: [],
         tags: ['funny'],
         owner: {
           name: 'Cure8',
