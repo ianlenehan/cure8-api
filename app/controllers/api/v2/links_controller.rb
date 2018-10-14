@@ -70,6 +70,7 @@ module Api::V2
         notify_curator = notify(curation)
 
         if curation.update(status: action, rating: rating)
+          Link.find(curation.link_id).touch
           rating_notification(curation, rating) if notify_curator
           render json: user_curations, each_serializer: ::UserLinksSerializer
         end

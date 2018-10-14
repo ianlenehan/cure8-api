@@ -88,6 +88,7 @@ module Api::V1
         notify_curator = notify(curation)
 
         if curation.update(status: action, rating: rating)
+          Link.find(curation.link_id).touch
           rating_notification(curation, rating) if notify_curator
           render json: { links: user.links, status: 200 }
         end

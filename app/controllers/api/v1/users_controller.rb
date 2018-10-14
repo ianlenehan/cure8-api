@@ -96,7 +96,7 @@ module Api::V1
               { user: recipient.name, rating: curation.rating }
             end
           end
-          { title: link.title, url: link.url, created_at: link.created_at, ratings: ratings.compact }
+          { title: link.title, url: link.url, created_at: link.updated_at, ratings: ratings.compact }
         end
       end
       render json: activity
