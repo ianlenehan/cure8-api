@@ -45,8 +45,8 @@ class PushNotificationService
 
   def onesignal
     {
-      app_id: '5a76b673-d57e-423e-92b0-e1375989bcb0',
-      rest_api_key: 'MTFlNjc3NzAtYjQ5My00MWYwLWI2MWEtMjk4NTlmYTE1MTU2'
+      app_id: Rails.application.secrets.,
+      rest_api_key: Rails.application.secrets.
     }
   end
 
