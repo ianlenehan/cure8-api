@@ -1,5 +1,11 @@
 module Api::V1
   class ConversationsController < ApplicationController
+    before_action :verify_user
+
+    def verify_user
+      render status: 401 unless db_token
+    end
+    
     def index
       conversations = Conversation.all
       render json: conversations

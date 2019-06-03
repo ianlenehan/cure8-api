@@ -78,6 +78,7 @@ GEM
       thor (~> 0.19.1)
     globalid (0.3.7)
       activesupport (>= 4.1.0)
+    graphql (1.9.6)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
     httparty (0.15.6)
@@ -212,6 +213,7 @@ DEPENDENCIES
   factory_girl_rails
   faker
   foreman (~> 0.82.0)
+  graphql
   httparty
   jwt
   listen (~> 3.0.5)

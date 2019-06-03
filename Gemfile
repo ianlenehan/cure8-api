@@ -21,6 +21,7 @@ gem 'jwt'
 gem 'metainspector'
 gem 'httparty'
 gem 'foreman', '~> 0.82.0'
+gem 'graphql'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
