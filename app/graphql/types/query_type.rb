@@ -15,5 +15,16 @@ module Types
     def users
       User.all
     end
+
+    field :curations, [CurationType], null: false
+    def curations
+      current_user.active_curations
+    end
+
+    private
+
+    def current_user
+      context[:current_user]
+    end
   end
 end

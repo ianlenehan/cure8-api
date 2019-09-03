@@ -1,5 +1,6 @@
 class Group < ApplicationRecord
-  validates :name, :presence => true
+  validates :name, presence: :true
+  belongs_to :user
 
   def is_member?
     if self.user_id
