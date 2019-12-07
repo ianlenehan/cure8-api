@@ -3,9 +3,13 @@ class GraphqlController < ApplicationController
     variables = ensure_hash(params[:variables])
     query = params[:query]
     operation_name = params[:operationName]
+
+    FirebaseIdToken::Certificates.request
+    auth_user = FirebaseIdToken::Signature.verify(request.headers["token"])
+
+    current_user = User.find_by(phone: auth_user["phone_number"])
     context = {
-      # Query context goes here, for example:
-      # current_user: current_user,
+      current_user: current_user,
     }
     result = Cure8ApiSchema.execute(query, variables: variables, context: context, operation_name: operation_name)
     render json: result

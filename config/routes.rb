@@ -1,8 +1,10 @@
 Rails.application.routes.draw do
   post "/graphql", to: "graphql#execute"
   mount ActionCable.server => '/cable'
+  get 'country' => 'generic#country_code'
 
   namespace :api, defaults: { format: :json } do
+
     namespace :v1 do
       post 'login' => 'sessions#create'
       post 'logout' => 'sessions#destroy'

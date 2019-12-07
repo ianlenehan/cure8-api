@@ -7,4 +7,6 @@ test:
 
 production:
   adapter: redis
-  url: redis://redistogo:87629770f4ea80ff573588728f1ce08a@cod.redistogo.com:11350/
+  # url: redis://redistogo:87629770f4ea80ff573588728f1ce08a@cod.redistogo.com:11350/
+  url: <%= ENV.fetch("REDIS_URL") { "redis://redistogo:87629770f4ea80ff573588728f1ce08a@cod.redistogo.com:11350/" } %>
+  channel_prefix: railsdiff_production
