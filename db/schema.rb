@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_18_104627) do
+ActiveRecord::Schema.define(version: 2020_01_01_131854) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -56,18 +56,32 @@ ActiveRecord::Schema.define(version: 2019_11_18_104627) do
     t.integer "tag_id"
   end
 
+  create_table "group_memberships", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "user_id"
+    t.integer "owner_id"
+    t.integer "group_id"
+  end
+
   create_table "groups", id: :serial, force: :cascade do |t|
     t.text "name"
     t.integer "owner_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "members", array: true
     t.integer "user_id"
+    t.text "member_ids", default: [], array: true
+  end
+
+  create_table "groups_members", id: false, force: :cascade do |t|
+    t.integer "group_id"
+    t.integer "member_id"
   end
 
   create_table "groups_users", id: false, force: :cascade do |t|
     t.integer "group_id"
     t.integer "user_id"
+    t.integer "member_id"
   end
 
   create_table "links", id: :serial, force: :cascade do |t|
@@ -84,6 +98,11 @@ ActiveRecord::Schema.define(version: 2019_11_18_104627) do
   create_table "links_tags", id: false, force: :cascade do |t|
     t.integer "link_id"
     t.integer "user_id"
+  end
+
+  create_table "members", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "messages", id: :serial, force: :cascade do |t|

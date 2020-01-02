@@ -5,8 +5,21 @@ class Types::CurationType < Types::BaseObject
   field :status, String, null: false
   field :comment, String, null: true
   field :curator_id, String, null: false
+  field :created_at, String, null: false
+  field :curator_name, String, null: false
+  field :tags, [Types::TagType], null: false
 
   def link
+    puts "what is link object #{object}"
     Link.find(object.link_id)
+  end
+
+  def curator_name
+    puts "what is object #{object}"
+    User.find(object.curator_id).name
+  end
+
+  def tags
+    object.tags
   end
 end

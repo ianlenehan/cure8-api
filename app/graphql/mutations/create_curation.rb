@@ -39,7 +39,7 @@ module Mutations
     end
 
     def create_curation(user_id, link_id, comment)
-      Curation.create(user_id: user_id, link_id: link_id, comment: comment)
+      Curation.create(user_id: user_id, link_id: link_id, comment: comment, curator_id: current_user.id)
     end
 
     def find_or_create_link(url)

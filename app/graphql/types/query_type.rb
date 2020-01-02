@@ -17,16 +17,35 @@ module Types
       User.all
     end
 
-    field :curations, [CurationType], null: false
+    field :curations, [CurationType], null: false do
+      argument :status, String, required: true
+      argument :tag_ids, [String], required: false
+    end
 
-    def curations
-      current_user.curations
+    def curations(status:, tag_ids:)
+      if tag_ids.length > 0
+        Curation.where(status: status).joins(:tags).where(tags: { id: tag_ids }).order('created_at DESC')
+      else
+        current_user.curations.where(status: status).order('created_at DESC')
+      end
     end
 
     field :contacts, [Types::ContactType], null: false
 
     def contacts
       current_user.contacts
+    end
+
+    field :groups, [Types::GroupType], null: false
+
+    def groups
+      current_user.groups
+    end
+
+    field :tags, [Types::TagType], null: false
+
+    def tags
+      Tag.joins(:curations).where(curations: { user_id: current_user.id, status: "archived" })
     end
 
     private
