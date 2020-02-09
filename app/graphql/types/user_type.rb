@@ -10,6 +10,9 @@ class Types::UserType < Types::BaseObject
   field :created_at, String, null: false
   field :updated_at, String, null: false
   field :contacts, [Types::ContactType], null: true
+  field :notifications, Boolean, null: true
+  field :notifications_new_link, Boolean, null: true
+  field :notifications_new_rating, Boolean, null: true
 
   def name
     first = object.first_name || ''

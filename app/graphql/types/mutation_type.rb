@@ -1,6 +1,7 @@
 module Types
   class MutationType < Types::BaseObject
     field :create_user, mutation: Mutations::CreateUser
+    field :toggle_setting, mutation: Mutations::ToggleSetting
 
     field :create_curation, mutation: Mutations::CreateCuration
     field :delete_curation, mutation: Mutations::DeleteCuration

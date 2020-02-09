@@ -3,7 +3,13 @@ module Types
     # Add root-level fields here.
     # They will be entry points for queries on your schema.
 
-    field :user, UserType, null: false do
+    field :app_user, UserType, null: false
+
+    def app_user
+      current_user
+    end
+
+    field :user, UserType, null: true do
       argument :phone, String, required: true
     end
 
