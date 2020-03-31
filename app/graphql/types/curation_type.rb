@@ -10,12 +10,10 @@ class Types::CurationType < Types::BaseObject
   field :tags, [Types::TagType], null: false
 
   def link
-    puts "what is link object #{object}"
     Link.find(object.link_id)
   end
 
   def curator_name
-    puts "what is object #{object}"
     User.find(object.curator_id).name
   end
 

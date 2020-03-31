@@ -15,7 +15,8 @@ class Types::UserType < Types::BaseObject
   field :notifications_new_rating, Boolean, null: true
 
   def name
-    first = object.first_name || ''
+    return '' unless object.first_name
+    first = object.first_name
     last = object.last_name || ''
     first + ' ' + last
   end

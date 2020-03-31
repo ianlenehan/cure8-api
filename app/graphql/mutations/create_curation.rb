@@ -84,28 +84,3 @@ module Mutations
     end
   end
 end
-
-
-# def create_link
-#   if valid_token
-#     contacts = params[:link][:contacts]
-#     comment = params[:link][:comment]
-#     link = find_or_create_link(user, params[:link])
-
-#     if contacts[0].class == String
-#       contact = User.find_or_create_by(phone: contacts[0])
-#       create_anon_curation(contact.id, comment, link)
-#     else
-#       create_curations(contacts, comment, link)
-#     end
-
-#     if params[:link][:save_to_my_links]
-#       Curation.create(user_id: user.id, link_id: link.id, comment: comment)
-#       render json: user_curations, each_serializer: ::UserLinksSerializer
-#     else
-#       render status: 201
-#     end
-#   else
-#     render status: 401
-#   end
-# end
