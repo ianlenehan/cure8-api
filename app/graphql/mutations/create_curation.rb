@@ -75,7 +75,6 @@ module Mutations
       rescue StandardError => e
         print "Meta Inspector Error: #{e}"
       end
-      puts "@@ok page here #{page}"
       if page
         title = page.title if page.title != 'Access Denied'
         image = page.images.best

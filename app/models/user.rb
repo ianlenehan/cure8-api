@@ -10,6 +10,8 @@ class User < ApplicationRecord
   has_and_belongs_to_many :conversations
 
   def name
+    return nil unless self.first_name
+    
     first = self.first_name || ''
     last = self.last_name || ''
     first + ' ' + last

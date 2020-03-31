@@ -51,7 +51,29 @@ module Types
     field :tags, [Types::TagType], null: false
 
     def tags
-      Tag.joins(:curations).where(curations: { user_id: current_user.id, status: "archived" })
+      Tag.joins(:curations).where(curations: { user_id: current_user.id, status: "archived" }).uniq.sort_by {|tag| tag.name}
+    end
+
+    field :activity, [ActivityType], null: false
+
+    def activity
+      # TODO paginate
+      links = Link.where(link_owner: current_user.id).order('created_at desc').limit(20)
+      activity = nil
+      if links.length
+        activity = links.map do |link|
+          curations = Curation.where(link_id: link.id)
+           ratings = curations.map do |curation|
+            recipient = User.find(curation.user_id)
+            contact = Contact.find_by(user_id: current_user.id, linked_user_id: recipient.id)
+            if recipient.id != current_user.id
+              { user: recipient.name || contact.name, rating: curation.rating, id: recipient.id }
+            end
+          end
+          { id: link.id, title: link.title, url: link.url, created_at: link.updated_at, ratings: ratings.compact }
+        end
+      end
+      activity
     end
 
     private
