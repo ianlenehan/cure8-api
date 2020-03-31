@@ -1,5 +1,11 @@
 module Api::V1
   class UsersController < ApplicationController
+    before_action :verify_user
+
+    def verify_user
+      render status: 401 unless db_token
+    end
+    
     def request_one_time_password
       status = 200
       message = does_user_have_account

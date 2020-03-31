@@ -1,13 +1,17 @@
 class User < ApplicationRecord
   validates :phone, presence: true
   has_many :curations
+  has_many :contacts
   has_many :links, through: :curations
   has_many :tags, through: :curations
   has_many :tokens, dependent: :destroy
+  has_many :groups, foreign_key: :owner_id
   has_many :user_notifications, dependent: :destroy
   has_and_belongs_to_many :conversations
 
   def name
+    return '' unless self.first_name
+    
     first = self.first_name || ''
     last = self.last_name || ''
     first + ' ' + last
@@ -17,6 +21,10 @@ class User < ApplicationRecord
     first = self.first_name || ''
     last = self.last_name.first || ''
     first + ' ' + last
+  end
+
+  def active_curations
+    curations.where.not(rating: 0).where.not(status: 'deleted')
   end
 
   def authenticate(code)
@@ -62,8 +70,8 @@ class User < ApplicationRecord
     links.sort_by { |link| link[:date_added] }.reverse
   end
 
-  def groups
-    Group.where(group_owner: self.id)
+  def groups	
+    Group.where(group_owner: self.id)	
   end
 
   def tags

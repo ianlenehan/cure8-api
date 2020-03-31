@@ -1,7 +1,10 @@
 Rails.application.routes.draw do
+  post "/graphql", to: "graphql#execute"
   mount ActionCable.server => '/cable'
+  get 'country' => 'generic#country_code'
 
   namespace :api, defaults: { format: :json } do
+
     namespace :v1 do
       post 'login' => 'sessions#create'
       post 'logout' => 'sessions#destroy'
@@ -13,7 +16,7 @@ Rails.application.routes.draw do
       post 'user/update' => 'users#update'
       post 'user/activity' => 'users#activity'
       post 'user/user_activity' => 'users#user_activity'
-      get 'verify' => 'sessions#verify_access_token'
+      post 'verify' => 'sessions#verify_access_token'
 
       post 'links/create' => 'links#create_link'
       post 'links/bookmarklet/safari' => 'links#create_link_from_safari'

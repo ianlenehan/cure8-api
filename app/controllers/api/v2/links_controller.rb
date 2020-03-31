@@ -1,5 +1,10 @@
 module Api::V2
   class LinksController < ApplicationController
+    before_action :verify_user
+
+    def verify_user
+      render status: 401 unless db_token
+    end
 
     def create_link
       if valid_token
@@ -95,7 +100,8 @@ module Api::V2
     private
 
     def user
-      @user ||= db_token.user
+      return nil unless db_token
+       @user ||= db_token.user
     end
 
     def db_token
