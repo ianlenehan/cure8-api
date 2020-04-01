@@ -36,7 +36,7 @@ module Types
       end
     end
 
-    field :contacts, [Types::ContactType], null: false
+    field :contacts, [Types::ContactType], null: true
 
     def contacts
       current_user.contacts
