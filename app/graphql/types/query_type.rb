@@ -42,19 +42,19 @@ module Types
       current_user.contacts
     end
 
-    field :groups, [Types::GroupType], null: false
+    field :groups, [Types::GroupType], null: true
 
     def groups
       current_user.groups
     end
 
-    field :tags, [Types::TagType], null: false
+    field :tags, [Types::TagType], null: true
 
     def tags
       Tag.joins(:curations).where(curations: { user_id: current_user.id, status: "archived" }).uniq.sort_by {|tag| tag.name}
     end
 
-    field :activity, [ActivityType], null: false
+    field :activity, [ActivityType], null: true
 
     def activity
       # TODO paginate
