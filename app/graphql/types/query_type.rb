@@ -29,12 +29,11 @@ module Types
     end
 
     def curations(status:, tag_ids:)
-      Curation.last
-      # if tag_ids.length > 0
-      #   Curation.where(status: status).joins(:tags).where(tags: { id: tag_ids }).order('created_at DESC')
-      # else
-      #   current_user.curations.where(status: status).order('created_at DESC')
-      # end
+      if tag_ids.length > 0
+        Curation.where(status: status).joins(:tags).where(tags: { id: tag_ids }).order('created_at DESC')
+      else
+        current_user.curations.where(status: status).order('created_at DESC')
+      end
     end
 
     field :contacts, [Types::ContactType], null: true
