@@ -83,29 +83,31 @@ class User < ApplicationRecord
   end
 
   def contacts
-    contacts = self.groups.map do |group|
-      if group.user_id
-        contact = User.find(group.user_id)
-        {
-          name: group.name,
-          phone: contact.phone,
-          id: group.id,
-          member: group.is_member?,
-          updated_at: group.updated_at,
-          user_id: group.user_id
-        }
-      end
-    end
-    contacts.compact.sort_by { |contact| contact[:name] }
+    nil
+    # contacts = self.groups.map do |group|
+    #   if group.user_id
+    #     contact = User.find(group.user_id)
+    #     {
+    #       name: group.name,
+    #       phone: contact.phone,
+    #       id: group.id,
+    #       member: group.is_member?,
+    #       updated_at: group.updated_at,
+    #       user_id: group.user_id
+    #     }
+    #   end
+    # end
+    # contacts.compact.sort_by { |contact| contact[:name] }
   end
 
   def contact_groups
-    contact_groups = self.groups.select { |group| group.members }
-    sorted_groups = contact_groups.sort_by { |group| group.name }
-    sorted_groups.map do |group|
-      members = get_members(group)
-      { id: group.id, name: group.name, members: members }
-    end
+    nil
+    # contact_groups = self.groups.select { |group| group.members }
+    # sorted_groups = contact_groups.sort_by { |group| group.name }
+    # sorted_groups.map do |group|
+    #   members = get_members(group)
+    #   { id: group.id, name: group.name, members: members }
+    # end
   end
 
   def stats
