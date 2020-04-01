@@ -71,7 +71,8 @@ class User < ApplicationRecord
   end
 
   def groups	
-    Group.where(group_owner: self.id)	
+    # Group.where(group_owner: self.id)
+    nil
   end
 
   def tags
