@@ -39,13 +39,13 @@ module Types
     field :contacts, [Types::ContactType], null: true
 
     def contacts
-      current_user.contacts
+      Contact.where(user_id: current_user.id)
     end
 
     field :groups, [Types::GroupType], null: true
 
     def groups
-      current_user.groups
+      Group.where(owner_id: current_user.id)
     end
 
     field :tags, [Types::TagType], null: true
@@ -74,6 +74,12 @@ module Types
         end
       end
       activity
+    end
+
+    field :conversations, [ConversationType], null: true
+
+    def conversations
+      current_user.conversations.uniq
     end
 
     private

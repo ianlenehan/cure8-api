@@ -23,6 +23,7 @@ gem 'metainspector'
 gem 'httparty'
 gem 'foreman', '~> 0.82.0'
 gem 'graphql'
+gem "graphiql-rails"
 gem 'json', '~> 1.8.6'
 gem 'firebase_id_token', '~> 2.3.1'
 gem 'whenever', require: false

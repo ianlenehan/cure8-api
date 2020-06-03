@@ -3,6 +3,10 @@ Rails.application.routes.draw do
   mount ActionCable.server => '/cable'
   get 'country' => 'generic#country_code'
 
+  if Rails.env.development?
+    mount GraphiQL::Rails::Engine, at: "/graphiql", graphql_path: "/graphql"
+  end
+
   namespace :api, defaults: { format: :json } do
 
     namespace :v1 do
