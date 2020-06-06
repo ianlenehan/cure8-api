@@ -26,33 +26,31 @@ module Types
     field :curations, [CurationType], null: false do
       argument :status, String, required: true
       argument :tag_ids, [String], required: false
-      argument :page, Int, required: false, default_value: nil
-      argument :per_page, Int, required: false, default_value: 10
+      argument :show_item_count, Int, required: true
     end
 
-    def curations(status:, tag_ids:, page:, per_page:)
+    def curations(status:, tag_ids:, show_item_count:)
+
       if tag_ids.length > 0
-        Curation.where(status: status).joins(:tags).where(tags: { id: tag_ids }).paginate(page: 1, per_page: per_page * page).order('created_at DESC')
+        Curation.where(status: status).joins(:tags).where(tags: { id: tag_ids }).paginate(page: 1, per_page: show_item_count).order('created_at DESC')
       else
-        current_user.curations.where(status: status).paginate(page: 1, per_page: per_page * page).order('created_at DESC')
+        current_user.curations.where(status: status).paginate(page: 1, per_page: show_item_count).order('created_at DESC')
       end
     end
 
     field :curations_page_info, Boolean, null: false do
       argument :status, String, required: true
       argument :tag_ids, [String], required: false
-      argument :page, Int, required: false, default_value: nil
-      argument :per_page, Int, required: false, default_value: 10
+      argument :show_item_count, Int, required: true
     end
 
-    def curations_page_info(status:, tag_ids:, page:, per_page:)
+    def curations_page_info(status:, tag_ids:, show_item_count:)
       if tag_ids.length > 0
-        count = Curation.where(status: status).joins(:tags).where(tags: { id: tag_ids }).count
+        total_count = Curation.where(status: status).joins(:tags).where(tags: { id: tag_ids }).count
       else
-        count = current_user.curations.where(status: status).count
+        total_count = current_user.curations.where(status: status).count
       end
-      max_pages = (count/per_page.to_f).ceil
-      page < max_pages
+      show_item_count < total_count
     end
 
     field :contacts, [Types::ContactType], null: true
