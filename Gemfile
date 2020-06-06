@@ -28,6 +28,7 @@ gem 'json', '~> 1.8.6'
 gem 'firebase_id_token', '~> 2.3.1'
 gem 'whenever', require: false
 gem 'geocoder'
+gem 'will_paginate', '~> 3.1.0'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development

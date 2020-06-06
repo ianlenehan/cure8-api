@@ -26,14 +26,33 @@ module Types
     field :curations, [CurationType], null: false do
       argument :status, String, required: true
       argument :tag_ids, [String], required: false
+      argument :page, Int, required: false, default_value: nil
+      argument :per_page, Int, required: false, default_value: 10
     end
 
-    def curations(status:, tag_ids:)
+    def curations(status:, tag_ids:, page:, per_page:)
       if tag_ids.length > 0
-        Curation.where(status: status).joins(:tags).where(tags: { id: tag_ids }).order('created_at DESC')
+        Curation.where(status: status).joins(:tags).where(tags: { id: tag_ids }).paginate(page: 1, per_page: per_page * page).order('created_at DESC')
       else
-        current_user.curations.where(status: status).order('created_at DESC')
+        current_user.curations.where(status: status).paginate(page: 1, per_page: per_page * page).order('created_at DESC')
       end
+    end
+
+    field :curations_page_info, Boolean, null: false do
+      argument :status, String, required: true
+      argument :tag_ids, [String], required: false
+      argument :page, Int, required: false, default_value: nil
+      argument :per_page, Int, required: false, default_value: 10
+    end
+
+    def curations_page_info(status:, tag_ids:, page:, per_page:)
+      if tag_ids.length > 0
+        count = Curation.where(status: status).joins(:tags).where(tags: { id: tag_ids }).count
+      else
+        count = current_user.curations.where(status: status).count
+      end
+      max_pages = (count/per_page.to_f).ceil
+      page < max_pages
     end
 
     field :contacts, [Types::ContactType], null: true

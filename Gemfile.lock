@@ -227,6 +227,7 @@ GEM
     websocket-extensions (0.1.4)
     whenever (1.0.0)
       chronic (>= 0.6.3)
+    will_paginate (3.1.8)
 
 PLATFORMS
   ruby
@@ -260,6 +261,7 @@ DEPENDENCIES
   twilio-ruby (~> 5.25.0)
   tzinfo-data
   whenever
+  will_paginate (~> 3.1.0)
 
 RUBY VERSION
    ruby 2.7.0p0
