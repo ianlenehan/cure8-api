@@ -104,5 +104,9 @@ module Types
     def current_user
       context[:current_user]
     end
+
+    def push_notification
+      @push_notification ||= PushNotificationService.new
+    end
   end
 end
