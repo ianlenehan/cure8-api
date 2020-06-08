@@ -9,7 +9,7 @@ module Mutations
 
     def resolve(push_token:)
       if (current_user.update(push_token: push_token))
-        { current_user: current_user, errors: [] }
+        { app_user: current_user, errors: [] }
       else
         { errors: ["There was a problem updateing the push token"] }
       end
@@ -20,6 +20,6 @@ module Mutations
     def current_user
       context[:current_user]
     end
-    
+
   end
 end
