@@ -6,6 +6,7 @@ class Types::UserType < Types::BaseObject
   field :name, String, null: true
   field :email, String, null: true
   field :phone, String, null: false
+  field :push_token, String, null: true
   field :image, String, null: false
   field :created_at, String, null: false
   field :updated_at, String, null: false
