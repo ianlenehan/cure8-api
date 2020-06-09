@@ -34,11 +34,11 @@ module Mutations
       }
 
       users.map do |user|
-        send_notification(user)
+        send_notification(user, details)
       end
     end
 
-    def send_notification(user)
+    def send_notification(user, details)
       user.push_tokens.each do |push_token|
         if push_token.notify && push_token.notify_new_link
           push_notification.publish(push_token.token, details)
