@@ -105,10 +105,6 @@ class User < ApplicationRecord
     { curations: curation_count, score: score, archived: archived_count, ratings: rating_count }
   end
 
-  def push_tokens
-    self.tokens.where(token_type: 'push')
-  end
-
   def auth_tokens
     self.tokens.where(token_type: 'auth')
   end
