@@ -2,6 +2,7 @@ class User < ApplicationRecord
   validates :phone, presence: true
   has_many :curations
   has_many :contacts
+  has_many :push_tokens
   has_many :links, through: :curations
   has_many :tags, through: :curations
   has_many :tokens, dependent: :destroy

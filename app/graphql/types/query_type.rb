@@ -99,14 +99,17 @@ module Types
       current_user.conversations.uniq
     end
 
+    field :push_tokens, [PushTokenType], null: true
+
+    def push_tokens
+      current_user.push_tokens
+    end
+
     private
 
     def current_user
       context[:current_user]
     end
 
-    def push_notification
-      @push_notification ||= PushNotificationService.new
-    end
   end
 end

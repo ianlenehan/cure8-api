@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_01_131854) do
+ActiveRecord::Schema.define(version: 2020_06_09_002624) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -112,6 +112,15 @@ ActiveRecord::Schema.define(version: 2020_01_01_131854) do
     t.datetime "updated_at", null: false
     t.integer "user_id"
     t.index ["conversation_id"], name: "index_messages_on_conversation_id"
+  end
+
+  create_table "push_tokens", force: :cascade do |t|
+    t.string "token"
+    t.boolean "notify", default: true
+    t.boolean "notify_new_link", default: true
+    t.boolean "notify_new_rating", default: true
+    t.boolean "notify_new_message", default: true
+    t.integer "user_id"
   end
 
   create_table "ratings", id: :serial, force: :cascade do |t|

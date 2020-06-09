@@ -2,7 +2,7 @@ module Types
   class MutationType < Types::BaseObject
     field :create_user, mutation: Mutations::CreateUser
     field :toggle_setting, mutation: Mutations::ToggleSetting
-    field :set_push_token, mutation: Mutations::SetPushToken
+    field :create_push_token, mutation: Mutations::CreatePushToken
 
     field :create_curation, mutation: Mutations::CreateCuration
     field :delete_curation, mutation: Mutations::DeleteCuration

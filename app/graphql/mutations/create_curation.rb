@@ -29,11 +29,13 @@ module Mutations
       if save_to_my_links
         user = current_user
         create_curation(current_user.id, link.id, comment)
+        send_new_link_notification(current_user.id, link.title) # TODO remove this
       end
 
       selected_contact_ids.each do |contact_id|
         contact = Contact.find(contact_id)
         create_curation(contact.linked_user_id, link.id, comment)
+        send_new_link_notification(contact.linked_user_id, link.title)
       end
       link
     end
@@ -81,6 +83,25 @@ module Mutations
       end
 
       { title: title, image: image }
+    end
+
+    def send_new_link_notification(user_id, link_title)
+      recipient = User.find(user_id)
+      details = {
+        from: current_user.name,
+        title: link_title,
+        type: 'curation'
+      }
+
+      recipient.push_tokens.each do |push_token|
+        if push_token.notify && push_token.notify_new_link
+          push_notification.publish(push_token.token, details)
+        end
+      end
+    end
+
+    def push_notification
+      @push_notification ||= PushNotificationService.new
     end
   end
 end
