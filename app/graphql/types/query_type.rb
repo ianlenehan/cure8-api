@@ -56,7 +56,7 @@ module Types
     field :contacts, [Types::ContactType], null: true
 
     def contacts
-      Contact.where(user_id: current_user.id)
+      Contact.where(user_id: current_user.id).order(:name)
     end
 
     field :groups, [Types::GroupType], null: true
@@ -103,6 +103,14 @@ module Types
 
     def push_tokens
       current_user.push_tokens
+    end
+
+    field :push_token, PushTokenType, null: false do
+      argument :token, String, required: true
+    end
+
+    def push_token(token:)
+      PushToken.find_by(token: token)
     end
 
     private

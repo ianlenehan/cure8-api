@@ -16,5 +16,7 @@ module Types
 
     field :create_conversation, mutation: Mutations::CreateConversation
     field :send_message_notification, mutation: Mutations::SendMessageNotification
+
+    field :toggle_notification, mutation: Mutations::ToggleNotification
   end
 end
