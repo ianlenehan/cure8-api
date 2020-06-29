@@ -9,7 +9,7 @@ module Mutations
     field :errors, [String], null: true
 
     def resolve(token_id:, field:)
-      current_token = PushToken.find(token_id)
+      current_token = PushToken.find_by(token: token_id)
 
       symbol = "#{field}".to_sym
       current_value = current_token[symbol]
