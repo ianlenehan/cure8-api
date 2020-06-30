@@ -15,6 +15,7 @@ module Types
     field :delete_group, mutation: Mutations::DeleteGroup
 
     field :create_conversation, mutation: Mutations::CreateConversation
+    field :leave_conversation, mutation: Mutations::LeaveConversation
     field :send_message_notification, mutation: Mutations::SendMessageNotification
 
     field :toggle_notification, mutation: Mutations::ToggleNotification
