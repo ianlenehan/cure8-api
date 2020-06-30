@@ -96,7 +96,8 @@ module Types
     field :conversations, [ConversationType], null: true
 
     def conversations
-      current_user.conversations.uniq
+      # TODO paginate
+      current_user.conversations.uniq.order('created_at DESC')
     end
 
     field :push_tokens, [PushTokenType], null: true
