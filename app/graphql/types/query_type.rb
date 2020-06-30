@@ -97,7 +97,7 @@ module Types
 
     def conversations
       # TODO paginate
-      current_user.conversations.uniq.order('created_at DESC')
+      current_user.conversations.order('created_at DESC').uniq
     end
 
     field :push_tokens, [PushTokenType], null: true
