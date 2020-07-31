@@ -29,7 +29,6 @@ module Mutations
       if save_to_my_links
         user = current_user
         create_curation(current_user.id, link.id, comment)
-        send_new_link_notification(current_user.id, link.title) # TODO remove this
       end
 
       selected_contact_ids.each do |contact_id|
