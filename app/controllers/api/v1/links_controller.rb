@@ -317,8 +317,8 @@ module Api::V1
 
     def twilio
       {
-        account_sid: Rails.application.secrets.twilio_account_sid,
-        auth_token: Rails.application.secrets.twilio_auth_token
+        account_sid: Rails.application.credentials.twilio[:account_sid],
+        auth_token: Rails.application.credentials.twilio[:auth_token]
       }
     end
 

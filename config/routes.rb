@@ -10,9 +10,11 @@ Rails.application.routes.draw do
   namespace :api, defaults: { format: :json } do
 
     namespace :v1 do
+      post 'authenticate', to: 'authentication#authenticate'
+      post 'request_password' => 'authentication#request_one_time_password'
       post 'login' => 'sessions#create'
       post 'logout' => 'sessions#destroy'
-      post 'users/request' => 'users#request_one_time_password'
+      post 'verify' => 'sessions#verify_access_token'
       post 'user/contacts' => 'users#get_contacts'
       post 'user/contacts/delete' => 'users#delete_contact'
       post 'user/info' => 'users#get_user_info'
@@ -20,7 +22,6 @@ Rails.application.routes.draw do
       post 'user/update' => 'users#update'
       post 'user/activity' => 'users#activity'
       post 'user/user_activity' => 'users#user_activity'
-      post 'verify' => 'sessions#verify_access_token'
 
       post 'links/create' => 'links#create_link'
       post 'links/bookmarklet/safari' => 'links#create_link_from_safari'

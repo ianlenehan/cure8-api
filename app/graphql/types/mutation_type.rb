@@ -1,6 +1,6 @@
 module Types
   class MutationType < Types::BaseObject
-    field :create_user, mutation: Mutations::CreateUser
+    field :update_user, mutation: Mutations::UpdateUser
     field :toggle_setting, mutation: Mutations::ToggleSetting
     field :create_push_token, mutation: Mutations::CreatePushToken
 
