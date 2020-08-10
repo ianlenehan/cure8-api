@@ -1,7 +1,7 @@
 module Mutations
-  class CreateUser < Mutations::BaseMutation
+  class UpdateUser < Mutations::BaseMutation
 
-    description "Creates a new user"
+    description "Updates a new user"
     argument :first_name, String, required: true
     argument :last_name, String, required: true
     argument :phone, String, required: true
@@ -10,10 +10,11 @@ module Mutations
     field :errors, [String], null: true
 
     def resolve(first_name:, last_name:, phone:)
-      if (user = User.create(first_name: first_name, last_name: last_name, phone: phone))
+      user = User.find_by(phone: phone)
+      if (user.update(first_name: first_name, last_name: last_name))
         { user: user, errors: [] }
       else
-        { errors: ["There was a problem creating the user"] }
+        { errors: ["There was a problem updating the user"] }
       end
     end
 

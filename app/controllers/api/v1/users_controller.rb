@@ -5,33 +5,7 @@ module Api::V1
     def verify_user
       render status: 401 unless db_token
     end
-    
-    def request_one_time_password
-      status = 200
-      message = does_user_have_account
-      if Rails.env == 'development'
-        phone = params[:user][:phone]
-        found_user.update(code: '1234', code_valid: true)
-      else
-        @client = Twilio::REST::Client.new twilio[:account_sid], twilio[:auth_token]
-
-        begin
-          @client.api.account.messages.create(
-            from: twilio_phone,
-            to: params[:user][:phone],
-            body: "Your Cure8 one time password is #{one_time_password}."
-          )
-        rescue Twilio::REST::TwilioError => error
-          puts error.message
-        end
-        if error
-          message = error.message
-          status = error.status_code
-        end
-      end
-      render json: { message: message, status: status }
-    end
-
+  
     # TODO do I need this?
     def authenticate
       code = params[:user][:code]
@@ -143,17 +117,6 @@ module Api::V1
       }
     end
 
-    def one_time_password
-      code = rand(1_000..9_999)
-      found_user.update(code: code, code_valid: true)
-      code
-    end
-
-    def does_user_have_account
-      return 'Login' if found_user.first_name
-      'Create Account'
-    end
-
     def remove_user_from_groups(contact_id)
       user.groups.each do |group|
         if group.members && group.members.include?(contact_id)
@@ -200,8 +163,8 @@ module Api::V1
 
     def twilio
       {
-        account_sid: Rails.application.secrets.twilio_account_sid,
-        auth_token: Rails.application.secrets.twilio_auth_token
+        account_sid: Rails.application.credentials.twilio[:account_sid],
+        auth_token: Rails.application.credentials.twilio[:auth_token]
       }
     end
 
