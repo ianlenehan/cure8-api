@@ -45,6 +45,12 @@ module Api::V1
       @found_user ||= User.find_or_create_by(phone: params[:phone])
     end
 
+    def one_time_password	
+      code = rand(1_000..9_999)	
+      found_user.update(code: code, code_valid: true)	
+      code	
+    end
+
     def twilio
       {
         account_sid: Rails.application.credentials.twilio[:account_sid],
